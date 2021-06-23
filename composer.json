@@ -1,0 +1,10 @@
+{
+    "name": "onpage-dev/onpage-php",
+    "authors": [
+        {
+            "name": "Giacomo Rizzi",
+            "email": "gufoes@gmail.com"
+        }
+    ],
+    "require": {}
+}
