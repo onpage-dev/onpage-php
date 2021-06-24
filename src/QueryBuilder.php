@@ -6,6 +6,7 @@ class QueryBuilder
 {
     private string $resource;
     private array $filters = [];
+    private FieldLoader $field_loader;
     private ?array $related_to = null;
     private Api $api;
 
@@ -13,6 +14,7 @@ class QueryBuilder
     {
         $this->api = $api;
         $this->resource = $resource;
+        $this->field_loader = new FieldLoader();
     }
 
     function all(): ThingCollection
@@ -24,13 +26,27 @@ class QueryBuilder
         $res = $this->api->get('things', $this->build('first'));
         return $res ? new Thing($this->api, $res) : null;
     }
+    public function with(array|string $relations)
+    {
+        if (is_string($relations)) {
+            $relations = [$relations];
+        }
+        foreach ($relations as $rel) {
+            $path = explode('.', $rel);
+            $loader = $this->field_loader;
 
+            foreach ($path as $rel_name) {
+                $loader = $loader->setRelation($rel_name);
+            }
+        }
+        return $this;
+    }
     private function build(string $return): array
     {
         $data = [
             'resource' => $this->resource,
             'filters' => $this->filters,
-            'fields' => ['+'],
+            'fields' => $this->field_loader->encode(),
             'return' => $return,
             'options' => [
                 'no_labels' => true,
@@ -46,7 +62,8 @@ class QueryBuilder
         return $data;
     }
 
-    function relatedTo(Field $field, int $thing_id) : QueryBuilder {
+    function relatedTo(Field $field, int $thing_id): QueryBuilder
+    {
         $this->related_to = [
             'field_id' => $field->id,
             'thing_id' => $thing_id,

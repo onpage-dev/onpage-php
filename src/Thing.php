@@ -30,7 +30,7 @@ class Thing
     {
         $field = $this->resolveField($field_name);
         $codename = $field->identifier();
-        if (!isset($this->json->relations->{$codename})) {
+        if (!isset($this->relations[$codename])) {
             $this->loadRelation($field);
         }
         return $this->relations[$codename];
@@ -51,7 +51,7 @@ class Thing
     }
 
     private function setRelation(Field $field, ThingCollection $things) {
-        $this->relations[$field->name] = $things;
+        $this->relations[$field->identifier()] = $things;
     }
 
     function resource(): Resource

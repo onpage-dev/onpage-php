@@ -1,4 +1,5 @@
 <?php
+
 namespace Test;
 
 use OnPage\Thing;
@@ -14,41 +15,54 @@ class MainTest extends \PHPUnit\Framework\TestCase
 
     function testSchemaLoaded()
     {
+        $this->assertSame(1, $this->api->getRequestCount());
         $this->assertTrue(mb_strlen($this->api->schema->label) > 0);
     }
 
-    function testGetFirstThing() {
+    function testGetFirstThing()
+    {
         $cap = $this->api->query('capitoli')->first();
         $this->checkFirstChapter($cap);
     }
-    
-    function testGetAllThings() {
+
+    function testGetAllThings()
+    {
         $caps = $this->api->query('capitoli')->all();
         $this->checkFirstChapter($caps->first());
         $this->assertSame(23, $caps->count());
     }
-    
-    function testOnDemandRelations() {
+
+    function testOnDemandRelations()
+    {
         $thing = $this->api->query('capitoli')->first();
-        $this->assertCount(1, $thing->rel('argomenti'));
-        $arg = $thing->rel('argomenti')->first();
-        $this->assertSame('Architetturale;Domestico;Commerciale;Industriale;Arredamento;', $arg->val('nota10'));
-        echo "\n";
-        foreach ($thing->rel('argomenti') as $arg) {
-            var_dump($arg->val('nota10'));
-            echo "\n";
-        }
+        $this->api->resetRequestCount();
+        $this->checkArgomenti($thing);
+        $this->assertSame(1, $this->api->getRequestCount());
     }
 
-    function testPreloadedThings() {
-        
+    function testPreloadedThings()
+    {
+        $thing = $this->api->query('capitoli')->with('argomenti.prodotti')->first();
+        $this->api->resetRequestCount();
+        $this->checkArgomenti($thing);
+        $this->assertSame(0, $this->api->getRequestCount());
     }
 
-    private function checkFirstChapter(Thing $cap) {
+    private function checkFirstChapter(Thing $cap)
+    {
         $this->assertNotNull($cap);
         $this->assertInstanceOf(\OnPage\Thing::class, $cap, 'Cannot pull first chapter');
         $this->assertSame(236826, $cap->id);
         $this->assertSame('Profili alluminio', $cap->val('descrizione')[0]);
     }
-    
+
+    function checkArgomenti(Thing $thing)
+    {
+        $this->assertCount(1, $thing->rel('argomenti'));
+        $arg = $thing->rel('argomenti')->first();
+        $this->assertSame('Architetturale;Domestico;Commerciale;Industriale;Arredamento;', $arg->val('nota10'));
+        foreach ($thing->rel('argomenti') as $arg) {
+            $arg->val('nota10');
+        }
+    }
 }

@@ -8,6 +8,7 @@ class Api
 {
     private Client $http;
     public Schema $schema;
+    private int $req_count = 0;
 
     function __construct(string $endpoint, string $token)
     {
@@ -32,15 +33,12 @@ class Api
 
     function get(string $endpoint, array $params = [])
     {
-        // $params['_method'] = 'get';
-        // return $this->post($endpoint, $params);
-        $res = $this->http->request('GET', $endpoint, [
-            'query' => $params,
-        ]);
-        return $this->handleResponse($res);
+        $params['_method'] = 'get';
+        return $this->post($endpoint, $params);
     }
     function post(string $endpoint, array $data = [])
     {
+        $this->req_count++;
         $res = $this->http->request('POST', $endpoint, [
             'json' => $data,
         ]);
@@ -62,5 +60,14 @@ class Api
     function query(string $resource): QueryBuilder
     {
         return new QueryBuilder($this, $resource);
+    }
+
+    public function getRequestCount(): int
+    {
+        return $this->req_count;
+    }
+
+    function resetRequestCount() {
+        $this->req_count = 0;
     }
 }
