@@ -31,6 +31,18 @@ class MainTest extends \PHPUnit\Framework\TestCase
         $this->checkFirstChapter($caps->first());
         $this->assertSame(23, $caps->count());
     }
+    function testFilters()
+    {
+        $thing = $this->api->query('capitoli')
+            ->where('_id', 236823)
+            ->first();
+        $this->assertSame(236823, $thing?->id);
+
+        $thing = $this->api->query('capitoli')
+            ->where('descrizione', 'like', 'led')
+            ->first();
+        $this->assertSame(236827, $thing?->id);
+    }
 
     function testOnDemandRelations()
     {

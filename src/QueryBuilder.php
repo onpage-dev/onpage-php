@@ -70,4 +70,14 @@ class QueryBuilder
         ];
         return $this;
     }
+
+    function where(string $field, $op, $value = null) {
+        if (is_null($value)) {
+            $value = $op;
+            $op = '=';
+        }
+        $filter = [$field, $op, $value];
+        $this->filters[] = $filter;
+        return $this;
+    }
 }

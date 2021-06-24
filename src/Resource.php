@@ -33,4 +33,8 @@ class Resource
             return $this->name_to_field[$id] ?? null;
         }
     }
+
+    function fields() : array {
+        return $this->fields;
+    }
 }
