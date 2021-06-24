@@ -72,8 +72,6 @@ echo $cat->val('dimension');
 echo $cat->val('description', 'fr'); // you can specify a language
 ```
 #### Files
-
-### File and image fields
 For `image` and `file` fields, the returned value will be an instance of `\OnPage\File::class`.
 To get a file or image url use the `->link()` function. The link will point to the original file.
 
