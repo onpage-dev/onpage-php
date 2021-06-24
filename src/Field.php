@@ -11,7 +11,7 @@ class Field
     public bool $is_multiple;
     public ?int $rel_res_id;
     public ?int $rel_field_id;
-    private string $type;
+    public string $type;
     private Api $api;
     function __construct(Api $api, object $json)
     {

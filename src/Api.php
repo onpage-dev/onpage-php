@@ -7,6 +7,7 @@ use GuzzleHttp\Client;
 class Api
 {
     private Client $http;
+    private string $api_url;
     public Schema $schema;
     private int $req_count = 0;
 
@@ -15,14 +16,14 @@ class Api
         if (!preg_match('/^https?:/', $endpoint)) {
             $endpoint = "https://$endpoint.onpage.it/api/";
         }
+        // Remove final /
+        $endpoint = preg_replace('/\\/+$/', '', $endpoint);
 
-        $endpoint .= "view/{$token}/";
-
+        $this->api_url = $endpoint;
         $this->http = new Client([
             'timeout' => 60000,
-            'base_uri' => $endpoint,
+            'base_uri' => "{$this->api_url}/view/{$token}/",
         ]);
-
         $this->loadSchema();
     }
 
@@ -69,5 +70,17 @@ class Api
 
     function resetRequestCount() {
         $this->req_count = 0;
+    }
+    function storageLink(string $token, string $name = null): string
+    {
+        
+        $base_uri = $this->http->getConfig('base_uri');
+        $url = "{$this->api_url}/storage/$token";
+        if ($name) {
+            $url .= '?' . http_build_query([
+                'name' => $name,
+            ]);
+        }
+        return $url;
     }
 }

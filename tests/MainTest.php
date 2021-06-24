@@ -2,6 +2,7 @@
 
 namespace Test;
 
+use OnPage\File;
 use OnPage\Thing;
 
 class MainTest extends \PHPUnit\Framework\TestCase
@@ -23,6 +24,14 @@ class MainTest extends \PHPUnit\Framework\TestCase
     {
         $cap = $this->api->query('capitoli')->first();
         $this->checkFirstChapter($cap);
+    }
+
+    function testFiles()
+    {
+        $arg = $this->api->query('argomenti')->first();
+        $img = $arg->val('disegno1');
+        $this->assertInstanceOf(File::class, $img);
+        $this->assertSame('https://lithos.onpage.it/api/storage/PMWJiNp8eYn2Hy3TevNU?name=shutterstock_36442114-ok-NEW.jpg', $img->link());
     }
 
     function testGetAllThings()

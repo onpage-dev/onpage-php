@@ -18,12 +18,20 @@ class Thing
         }
     }
 
-    function val(string $field_name, string $lang = null): string | int | array
+    function val(string $field_name, string $lang = null): string | int | array | File
     {
         $field = $this->resolveField($field_name);
         $codename = $field->identifier($lang);
+        $values = $this->json->fields?->{$codename};
         $default = $field->is_multiple ? [] : null;
-        return $this->json->fields->{$codename} ?? $default;
+        if (is_null($values)) return $default;
+        if (!$field->is_multiple) $values = [$values];
+        if (in_array($field->type, ['file', 'image'])) {
+            $values = array_map(function($v) {
+                return new File($this->api, $v);
+            }, $values);
+        }
+        return $field->is_multiple ? $values : $values[0];
     }
 
     function rel(string $field_name): ThingCollection
