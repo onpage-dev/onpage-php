@@ -71,6 +71,36 @@ echo $cat->val('name');
 echo $cat->val('dimension');
 echo $cat->val('description', 'fr'); // you can specify a language
 ```
+#### Files
+
+### File and image fields
+For `image` and `file` fields, the returned value will be an instance of `\OnPage\File::class`.
+To get a file or image url use the `->link()` function. The link will point to the original file.
+
+```php
+# original size
+$product->val('specsheet')->name // icecream-spec.pdf
+$product->val('specsheet')->token // R417C0YAM90RF
+$product->val('specsheet')->link() // https://acme-inc.onpage.it/api/storage/R417C0YAM90RF?name=icecream-spec.pdf
+```
+
+To turn images into a thumbnail add an array of options as shown below:
+```php
+# maintain proportions width 200px
+$product->val('cover_image')->link(['x' => 200])
+
+# maintain proportions height 100px
+$product->val('cover_image')->link(['y' => 100])
+
+# crop image to width 200px and height 100px
+$product->val('cover_image')->link(['x' => 200, 'y' => 100])
+
+# maintain proportions and contain in a rectangle of width 200px and height 100px 
+$product->val('cover_image')->link(['x' => 200, 'y' => 100, 'contain' => true])
+
+# convert the image to png (default is jpg)
+$product->val('cover_image')->link(['x' => 200, 'format' => 'png'])
+```
 
 ### Get thing relations
 ```php
