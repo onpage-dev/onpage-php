@@ -24,10 +24,10 @@ $api = new \OnPage\Api('acme-inc', $api_token);
 ### Get structure information
 ```php
 // Retrieve info about the schema:
-echo $this->api->schema->label;
+echo $api->schema->label;
 
 // Retrieve a resource given its name or ID
-$res = $this->api->schema->res('products');
+$res = $api->schema->res('products');
 foreach ($res->fields() as $field) {
     echo "$field->label\n";
     echo "$field->name\n";
