@@ -8,6 +8,12 @@ composer config repositories.onpage vcs 'https://github.com/onpage-dev/onpage-ph
 composer require onpage-dev/onpage-php:^v1
 ```
 
+Of course, remember to include the composer autoload:
+```php
+<?php
+require 'vendor/autoload.php';
+```
+
 ## Usage
 
 ### Setup
@@ -31,7 +37,7 @@ foreach ($res->fields() as $field) {
 }
 ```
 
-### Get data
+### Query your data
 ```php
 // Retrieve all records of a resource (returns a laravel collection of \OnPage\Thing)
 $products = $api->query('products')->all();
@@ -39,7 +45,7 @@ foreach ($products as $prod) {
     // ...
 }
 
-// Get only the first product
+// Get only the first item
 $prod = $api->query('products')->first();
 ```
 
