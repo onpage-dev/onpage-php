@@ -61,12 +61,27 @@ class MainTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(1, $this->api->getRequestCount());
     }
 
+    function testOnDemandNestedRelations()
+    {
+        $thing = $this->api->query('capitoli')->first();
+        $this->api->resetRequestCount();
+        $arts = $thing->rel('argomenti.prodotti.articoli');
+        $this->assertSame(1, $this->api->getRequestCount());
+        $this->assertSame(76, $arts->count());
+    }
+
     function testPreloadedThings()
     {
         $thing = $this->api->query('capitoli')->with('argomenti.prodotti')->first();
         $this->api->resetRequestCount();
         $this->checkArgomenti($thing);
         $this->assertSame(0, $this->api->getRequestCount());
+
+        $thing = $this->api->query('capitoli')->with('argomenti.prodotti.articoli')->first();
+        $this->api->resetRequestCount();
+        $arts = $thing->rel('argomenti.prodotti.articoli');
+        $this->assertSame(0, $this->api->getRequestCount());
+        $this->assertSame(76, $arts->count());
     }
 
     private function checkFirstChapter(Thing $cap)

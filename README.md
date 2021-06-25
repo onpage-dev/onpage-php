@@ -107,6 +107,9 @@ $subcategories = $cat->rel('subcategories');
 foreach ($subcategories as $subcategory) {
     echo $subcategory->val('name');
 }
+
+// You can also get nested relations in one shot
+$products = $cat->rel('subcategories.products');
 ```
 
 ### Preload thing relations
