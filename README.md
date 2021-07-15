@@ -27,7 +27,7 @@ $api = new \OnPage\Api('acme-inc', $api_token);
 echo $api->schema->label;
 
 // Retrieve a resource given its name or ID
-$res = $api->schema->res('products');
+$res = $api->schema->resource('products');
 foreach ($res->fields() as $field) {
     echo "$field->label\n";
     echo "$field->name\n";
