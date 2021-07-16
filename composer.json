@@ -16,6 +16,7 @@
         "symfony/dotenv": "^5.3"
     },
     "require": {
+        "php": "^7.4 || ^8.0",
         "guzzlehttp/guzzle": "^7.0",
         "illuminate/collections": "^8.48"
     },
