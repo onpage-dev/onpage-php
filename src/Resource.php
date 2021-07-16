@@ -2,7 +2,6 @@
 
 namespace OnPage;
 
-
 class Resource
 {
     private $id;
@@ -11,7 +10,7 @@ class Resource
     private array $id_to_field;
     private array $name_to_field;
     private Api $api;
-    function __construct(Api $api, object $json)
+    public function __construct(Api $api, object $json)
     {
         $this->api = $api;
         $this->id = $json->id;
@@ -25,7 +24,7 @@ class Resource
         }
     }
 
-    function field(int|string $id): ?Field
+    public function field($id): ?Field
     {
         if (is_numeric($id)) {
             return $this->id_to_field[$id] ?? null;
@@ -34,7 +33,8 @@ class Resource
         }
     }
 
-    function fields() : array {
+    public function fields() : array
+    {
         return $this->fields;
     }
 }

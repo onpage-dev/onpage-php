@@ -8,7 +8,7 @@ class Thing
     public int $id;
     private Api $api;
     private array $relations = [];
-    function __construct(Api $api, object $json)
+    public function __construct(Api $api, object $json)
     {
         $this->api = $api;
         $this->json = $json;
@@ -18,14 +18,18 @@ class Thing
         }
     }
 
-    function val(string $field_name, string $lang = null): null | string | bool | int | array | File
+    public function val(string $field_name, string $lang = null)//: null | string | bool | int | array | File
     {
         $field = $this->resolveField($field_name);
         $codename = $field->identifier($lang);
         $default = $field->is_multiple ? [] : null;
         $values = $this->json->fields->{$codename} ?? $default;
-        if (is_null($values)) return $default;
-        if (!$field->is_multiple) $values = [$values];
+        if (is_null($values)) {
+            return $default;
+        }
+        if (!$field->is_multiple) {
+            $values = [$values];
+        }
         if (in_array($field->type, ['file', 'image'])) {
             $values = array_map(function ($v) {
                 return new File($this->api, $v);
@@ -34,7 +38,7 @@ class Thing
         return $field->is_multiple ? $values : $values[0];
     }
 
-    function rel(string|array $path): ThingCollection
+    public function rel($path): ThingCollection
     {
         if (is_string($path)) {
             $path = explode('.', $path);
@@ -63,7 +67,9 @@ class Thing
     {
         $res = $this->resource();
         $field = $res->field($field_name);
-        if (!$field) throw new Exceptions\FieldNotFound("Cannot find field $field_name");
+        if (!$field) {
+            throw new Exceptions\FieldNotFound("Cannot find field $field_name");
+        }
         return $field;
     }
 
@@ -81,7 +87,7 @@ class Thing
         $this->relations[$field->identifier()] = $things;
     }
 
-    function resource(): Resource
+    public function resource(): Resource
     {
         return $this->api->schema->resource($this->json->resource_id);
     }

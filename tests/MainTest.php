@@ -14,19 +14,19 @@ class MainTest extends \PHPUnit\Framework\TestCase
         $this->api = new \OnPage\Api($_ENV['COMPANY'], $_ENV['TOKEN']);
     }
 
-    function testSchemaLoaded()
+    public function testSchemaLoaded()
     {
         $this->assertSame(1, $this->api->getRequestCount());
         $this->assertTrue(mb_strlen($this->api->schema->label) > 0);
     }
 
-    function testGetFirstThing()
+    public function testGetFirstThing()
     {
         $cap = $this->api->query('capitoli')->first();
         $this->checkFirstChapter($cap);
     }
 
-    function testFiles()
+    public function testFiles()
     {
         $arg = $this->api->query('argomenti')->first();
         $img = $arg->val('disegno1');
@@ -34,26 +34,26 @@ class MainTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('https://lithos.onpage.it/api/storage/PMWJiNp8eYn2Hy3TevNU?name=shutterstock_36442114-ok-NEW.jpg', $img->link());
     }
 
-    function testGetAllThings()
+    public function testGetAllThings()
     {
         $caps = $this->api->query('capitoli')->all();
         $this->checkFirstChapter($caps->first());
         $this->assertSame(23, $caps->count());
     }
-    function testFilters()
+    public function testFilters()
     {
         $thing = $this->api->query('capitoli')
             ->where('_id', 236823)
             ->first();
-        $this->assertSame(236823, $thing?->id);
+        $this->assertSame(236823, $thing->id);
 
         $thing = $this->api->query('capitoli')
             ->where('descrizione', 'like', 'led')
             ->first();
-        $this->assertSame(236827, $thing?->id);
+        $this->assertSame(236827, $thing->id);
     }
 
-    function testOnDemandRelations()
+    public function testOnDemandRelations()
     {
         $thing = $this->api->query('capitoli')->first();
         $this->api->resetRequestCount();
@@ -61,7 +61,7 @@ class MainTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(1, $this->api->getRequestCount());
     }
 
-    function testOnDemandNestedRelations()
+    public function testOnDemandNestedRelations()
     {
         $thing = $this->api->query('capitoli')->first();
         $this->api->resetRequestCount();
@@ -70,7 +70,7 @@ class MainTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(76, $arts->count());
     }
 
-    function testPreloadedThings()
+    public function testPreloadedThings()
     {
         $thing = $this->api->query('capitoli')->with('argomenti.prodotti')->first();
         $this->api->resetRequestCount();
@@ -92,7 +92,7 @@ class MainTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('Profili alluminio', $cap->val('descrizione')[0]);
     }
 
-    function checkArgomenti(Thing $thing)
+    public function checkArgomenti(Thing $thing)
     {
         $this->assertCount(1, $thing->rel('argomenti'));
         $arg = $thing->rel('argomenti')->first();

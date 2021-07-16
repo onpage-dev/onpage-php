@@ -2,7 +2,6 @@
 
 namespace OnPage;
 
-
 class Schema
 {
     public $id;
@@ -13,7 +12,7 @@ class Schema
     private array $resources;
     public array $langs;
 
-    function __construct(Api $api, object $json)
+    public function __construct(Api $api, object $json)
     {
         $this->api = $api;
         $this->id = $json->id;
@@ -27,7 +26,7 @@ class Schema
         }
     }
 
-    function resource(int|string $id): ?Resource
+    public function resource($id): Resource
     {
         if (is_numeric($id)) {
             return $this->id_to_resource[$id] ?? null;
