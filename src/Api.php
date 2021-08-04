@@ -10,6 +10,8 @@ class Api
     private string $api_url;
     public Schema $schema;
     private int $req_count = 0;
+    private bool $auto_save = true;
+    private array $pending_writes = [];
 
     function __construct(string $endpoint, string $token)
     {

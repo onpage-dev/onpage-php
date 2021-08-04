@@ -9,6 +9,8 @@ class QueryBuilder
     private FieldLoader $field_loader;
     private ?array $related_to = null;
     private Api $api;
+    private ?int $limit = null;
+    private ?int $offset = null;
 
     public function __construct(Api $api, string $resource)
     {
@@ -59,7 +61,25 @@ class QueryBuilder
             $data['related_to'] = $this->related_to;
         }
 
+        if ($this->limit) {
+            $data['limit'] = $this->limit;
+        }
+        if ($this->offset) {
+            $data['offset'] = $this->offset;
+        }
+
         return $data;
+    }
+
+    function offset(int $offset)
+    {
+        $this->offset = $offset;
+        return $this;
+    }
+    function limit(int $limit)
+    {
+        $this->limit = $limit;
+        return $this;
     }
 
     public function relatedTo(Field $field, int $thing_id): QueryBuilder

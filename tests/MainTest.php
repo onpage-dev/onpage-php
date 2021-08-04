@@ -24,6 +24,14 @@ class MainTest extends \PHPUnit\Framework\TestCase
     {
         $cap = $this->api->query('capitoli')->first();
         $this->checkFirstChapter($cap);
+        $cap_by_id = $this->api->query('capitoli')->where('_id', $cap->id)->first();
+        $this->assertSame($cap->id, $cap_by_id->id);
+    }
+
+    function testGetNonExistingFirst()
+    {
+        $cap = $this->api->query('capitoli')->offset(99999)->first();
+        $this->assertNull($cap);
     }
 
     public function testFiles()
