@@ -4,8 +4,9 @@ namespace OnPage;
 
 class Resource
 {
-    private $id;
-    private $label;
+    public $id;
+    public $label;
+    public array $labels;
     private array $fields;
     private array $id_to_field;
     private array $name_to_field;
@@ -16,6 +17,7 @@ class Resource
         $this->id = $json->id;
         $this->name = $json->name;
         $this->label = $json->label;
+        $this->labels = $json->labels;
         foreach ($json->fields as $field_json) {
             $field = new Field($this->api, $field_json);
             $this->fields[] = $field;
