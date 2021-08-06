@@ -17,7 +17,7 @@ class Resource
         $this->id = $json->id;
         $this->name = $json->name;
         $this->label = $json->label;
-        $this->labels = $json->labels;
+        $this->labels = (array) $json->labels;
         foreach ($json->fields as $field_json) {
             $field = new Field($this->api, $field_json);
             $this->fields[] = $field;

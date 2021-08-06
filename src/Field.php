@@ -22,7 +22,7 @@ class Field
         $this->is_translatable = $json->is_translatable;
         $this->name = $json->name;
         $this->label = $json->label;
-        $this->labels = $json->labels;
+        $this->labels = (array) $json->labels;
         $this->type = $json->type;
         $this->rel_res_id = $json->rel_res_id;
         $this->rel_field_id = $json->rel_field_id;
