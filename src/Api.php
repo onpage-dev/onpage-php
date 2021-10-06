@@ -41,11 +41,56 @@ class Api
     }
     function post(string $endpoint, array $data = [])
     {
+        $req = [];
+        if ($this->containsFiles($data)) {
+            $req['multipart'] = $this->toFormData($data);
+        } else {
+            $req['json'] = $data;
+        }
         $this->req_count++;
-        $res = $this->http->request('POST', $endpoint, [
-            'json' => $data,
-        ]);
+        $res = $this->http->request('POST', $endpoint, $req);
         return $this->handleResponse($res);
+    }
+
+    private function containsFiles(array $data)
+    {
+        foreach ($data as $value) {
+            if (is_object($value) && $value instanceof File) {
+                return true;
+            } elseif (is_array($value)) {
+                if ($this->containsFiles($value)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    private function toFormData(array $data, $namespace = '')
+    {
+        $ret = [];
+        foreach ($data as $key => $value) {
+            $ns = $namespace ? "{$namespace}[{$key}]" : $key;
+            if (is_null($value)) {
+                // Do nothing
+            } elseif (is_object($value) && $value instanceof File) {
+                $ret[] = [
+                    'name' => $ns,
+                    'filename' => basename($value->path),
+                    'contents' => fopen($value->path, 'r'),
+                ];
+            } elseif (is_scalar($value)) {
+                $ret[] = [
+                    'name' => $ns,
+                    'contents' => $value,
+                ];
+            } else {
+                $data = $this->toFormData($value, $ns);
+                $ret = array_merge($ret, $data);
+            }
+        }
+        return $ret;
     }
 
     private function handleResponse(\Psr\Http\Message\ResponseInterface $res)
@@ -70,12 +115,13 @@ class Api
         return $this->req_count;
     }
 
-    function resetRequestCount() {
+    function resetRequestCount()
+    {
         $this->req_count = 0;
     }
     function storageLink(string $token, string $name = null): string
     {
-        
+
         $base_uri = $this->http->getConfig('base_uri');
         $url = "{$this->api_url}/storage/$token";
         if ($name) {
