@@ -52,7 +52,7 @@ class MainTest extends \PHPUnit\Framework\TestCase
 
         $count = $res_cap->query()->all()->count();
 
-        $updater = $res_cap->updater();
+        $updater = $res_cap->writer();
         $updater->createThing()->set('indice', -2)->set('dist', 3);
         $updater->createThing()->set('indice', -3)->set('dist', 4);
         $updater->save();

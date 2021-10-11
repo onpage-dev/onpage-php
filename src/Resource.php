@@ -40,8 +40,8 @@ class Resource
         return $this->fields;
     }
 
-    function updater() : BulkUpdater {
-        return new BulkUpdater($this->api, $this);
+    function writer() : DataWriter {
+        return new DataWriter($this->api, $this);
     }
 
     function query() : QueryBuilder {

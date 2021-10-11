@@ -94,9 +94,9 @@ class Thing
         return $this->api->schema->resource($this->json->resource_id);
     }
 
-    function editor(BulkUpdater $updater = null): ThingEditor
+    function editor(DataWriter $updater = null): ThingEditor
     {
-        if (!$updater) $updater = $this->resource()->updater();
+        if (!$updater) $updater = $this->resource()->writer();
         return $updater->forThing($this->id);
     }
 }

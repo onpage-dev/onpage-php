@@ -10,9 +10,9 @@ class ThingEditor
     private ?int $id;
     private array $fields = [];
     private array $relations = [];
-    private BulkUpdater $updater;
+    private DataWriter $updater;
 
-    function __construct(BulkUpdater $updater, int $id = null)
+    function __construct(DataWriter $updater, int $id = null)
     {
         $this->id = $id;
         $this->updater = $updater;

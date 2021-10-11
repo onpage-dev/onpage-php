@@ -4,7 +4,7 @@ namespace OnPage;
 
 use OnPage\Exceptions\FieldNotFound;
 
-class BulkUpdater
+class DataWriter
 {
     private Api $api;
     private Resource $resource;
