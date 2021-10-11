@@ -8,6 +8,7 @@ class Schema
     public $label;
     private Api $api;
     private array $id_to_resource;
+    private array $id_to_field;
     private array $name_to_resource;
     private array $resources;
     public array $langs;
@@ -23,6 +24,9 @@ class Schema
             $this->resources[] = $res;
             $this->id_to_resource[$res_json->id] = $res;
             $this->name_to_resource[$res_json->name] = $res;
+            foreach ($res->fields() as $field) {
+                $this->id_to_field[$field->id] = $field;
+            }
         }
     }
 
@@ -33,5 +37,13 @@ class Schema
         } else {
             return $this->name_to_resource[$id] ?? null;
         }
+    }
+    public function resources(): array
+    {
+        return array_values($this->id_to_resource);
+    }
+    function fields(): array
+    {
+        return array_values($this->id_to_field);
     }
 }

@@ -4,7 +4,7 @@ namespace OnPage;
 
 class QueryBuilder
 {
-    private string $resource;
+    private Resource $resource;
     private array $filters = [];
     private FieldLoader $field_loader;
     private ?array $related_to = null;
@@ -12,7 +12,7 @@ class QueryBuilder
     private ?int $limit = null;
     private ?int $offset = null;
 
-    public function __construct(Api $api, string $resource)
+    public function __construct(Api $api, Resource $resource)
     {
         $this->api = $api;
         $this->resource = $resource;
@@ -27,6 +27,12 @@ class QueryBuilder
     {
         $res = $this->api->get('things', $this->build('first'));
         return $res ? new Thing($this->api, $res) : null;
+    }
+    public function delete(): ?array
+    {
+        $req = $this->build('delete');
+        $res = $this->api->delete('things', $req);
+        return $res;
     }
     public function with($relations)
     {
@@ -46,7 +52,7 @@ class QueryBuilder
     private function build(string $return): array
     {
         $data = [
-            'resource' => $this->resource,
+            'resource' => $this->resource->name,
             'filters' => $this->filters,
             'fields' => $this->field_loader->encode(),
             'return' => $return,

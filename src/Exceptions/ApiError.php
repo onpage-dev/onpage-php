@@ -2,6 +2,6 @@
 
 namespace OnPage\Exceptions;
 
-class ApiError extends \Exception
+class ApiError extends GenericException
 {
 }

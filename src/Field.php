@@ -7,12 +7,13 @@ class Field
 {
     public int $id;
     public string $label;
+    public string $name;
+    public string $type;
     public array $labels;
     public bool $is_translatable;
     public bool $is_multiple;
     public ?int $rel_res_id;
     public ?int $rel_field_id;
-    public string $type;
     private Api $api;
     function __construct(Api $api, object $json)
     {

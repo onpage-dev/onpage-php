@@ -39,6 +39,12 @@ class Api
         $params['_method'] = 'get';
         return $this->post($endpoint, $params);
     }
+
+    function delete(string $endpoint, array $params = [])
+    {
+        $params['_method'] = 'delete';
+        return $this->post($endpoint, $params);
+    }
     function post(string $endpoint, array $data = [])
     {
         $req = [];
@@ -107,7 +113,7 @@ class Api
 
     function query(string $resource): QueryBuilder
     {
-        return new QueryBuilder($this, $resource);
+        return $this->schema->resource($resource)->query();
     }
 
     public function getRequestCount(): int

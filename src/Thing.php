@@ -2,6 +2,8 @@
 
 namespace OnPage;
 
+use OnPage\Exceptions\FieldNotFound;
+
 class Thing
 {
     private object $json;
@@ -18,7 +20,7 @@ class Thing
         }
     }
 
-    public function val(string $field_name, string $lang = null)//: null | string | bool | int | array | File
+    public function val(string $field_name, string $lang = null) //: null | string | bool | int | array | File
     {
         $field = $this->resolveField($field_name);
         $codename = $field->identifier($lang);
@@ -68,7 +70,7 @@ class Thing
         $res = $this->resource();
         $field = $res->field($field_name);
         if (!$field) {
-            throw new Exceptions\FieldNotFound("Cannot find field $field_name");
+            throw FieldNotFound::from($field_name);
         }
         return $field;
     }
@@ -90,5 +92,11 @@ class Thing
     public function resource(): Resource
     {
         return $this->api->schema->resource($this->json->resource_id);
+    }
+
+    function editor(BulkUpdater $updater = null): ThingEditor
+    {
+        if (!$updater) $updater = $this->resource()->updater();
+        return $updater->forThing($this->id);
     }
 }
