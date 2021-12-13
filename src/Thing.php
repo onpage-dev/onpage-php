@@ -20,14 +20,26 @@ class Thing
         }
     }
 
-    public function val(string $field_name, string $lang = null) //: null | string | bool | int | array | File
+    public function val(string $field_path, string $lang = null) //: null | string | bool | int | array | File
     {
+        $values = $this->values($field_path, $lang, $field);
+        if ($field->is_multiple) return $values;
+        return $values[0] ?? null;
+    }
+    public function values(string $field_path, string $lang = null, Field &$field = null): array
+    {
+        $field_path = explode('.', $field_path);
+        $field_name = array_shift($field_path);
+        if (!empty($field_path)) {
+            $related = $this->rel($field_name)->first();
+            if (!$related) return [];
+            return $related->values(implode('.', $field_path), $lang, $field);
+        }
         $field = $this->resolveField($field_name);
         $codename = $field->identifier($lang);
-        $default = $field->is_multiple ? [] : null;
-        $values = $this->json->fields->{$codename} ?? $default;
+        $values = $this->json->fields->{$codename} ?? null;
         if (is_null($values)) {
-            return $default;
+            return [];
         }
         if (!$field->is_multiple) {
             $values = [$values];
@@ -37,7 +49,7 @@ class Thing
                 return new File($this->api, $v);
             }, $values);
         }
-        return $field->is_multiple ? $values : $values[0];
+        return $values;
     }
 
     public function rel($path): ThingCollection
