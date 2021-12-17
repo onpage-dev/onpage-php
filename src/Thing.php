@@ -20,6 +20,10 @@ class Thing
         }
     }
 
+    function getOrder() : int {
+        return $this->json->order;
+    }
+
     public function val(string $field_path, string $lang = null) //: null | string | bool | int | array | File
     {
         $values = $this->values($field_path, $lang, $field);
