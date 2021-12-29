@@ -116,6 +116,20 @@ $product->val('cover_image')->link(['x' => 200, 'y' => 100, 'contain' => true])
 $product->val('cover_image')->link(['x' => 200, 'format' => 'png'])
 ```
 
+#### Other utilities
+
+```php
+// Speed things up by only loading some fields
+$api->query('products')->loadFields(['title'])->all();
+
+// Get a mapping between two fields or a field and the thing ID
+$api->query('products')->map('code');
+// [ 'MYSKU100' => 1827, 'MYSKU101' => 1828, ... ]
+
+$api->query('products')->map('code', 'title');
+// [ 'MYSKU100' => 'Apples', 'MYSKU101' => 'Bananas', ... ]
+```
+
 ### Get thing relations
 
 ```php

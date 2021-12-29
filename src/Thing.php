@@ -32,6 +32,9 @@ class Thing
     }
     public function values(string $field_path, string $lang = null, Field &$field = null): array
     {
+        if ($field_path == '_id') return [$this->id];
+        if ($field_path == '_resource_id') return [$this->json->resource_id];
+        if ($field_path == '_created_at') return [$this->json->created_at];
         $field_path = explode('.', $field_path);
         $field_name = array_shift($field_path);
         if (!empty($field_path)) {

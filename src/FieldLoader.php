@@ -19,6 +19,10 @@ class FieldLoader {
         return $this->relations[$rel_name];
     }
 
+    function loadFields(array $fields) {
+        $this->fields = $fields;
+    }
+
     function encode() {
         $ret = $this->fields;
         foreach ($this->relations as $rel) {

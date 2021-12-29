@@ -19,9 +19,26 @@ class QueryBuilder
         $this->field_loader = new FieldLoader();
     }
 
+    function loadFields(array $fields): QueryBuilder
+    {
+        $this->field_loader->loadFields($fields);
+        return $this;
+    }
+
     public function all(): ThingCollection
     {
         return ThingCollection::fromResponse($this->api, $this->api->get('things', $this->build('list')));
+    }
+    public function map(string $keyfield, string $valuefield = '_id', $lang = null): array
+    {
+        $this->loadFields([$keyfield, $valuefield]);
+        return $this->all()->mapWithKeys(function (Thing $thing)  use ($keyfield, $valuefield, $lang) {
+            $key = $thing->values($keyfield, $lang)[0] ?? '';
+            $value = $thing->values($valuefield, $lang)[0] ?? '';
+            return [
+                $key => $value
+            ];
+        })->all();
     }
     public function first(): ?Thing
     {
