@@ -37,6 +37,11 @@ class ThingEditor
         return $this;
     }
 
+    function setRel(string $field_name, array $values)
+    {
+        $this->relations[$field_name] = $values;
+    }
+
     function toArray(): array
     {
         $fields = [];
