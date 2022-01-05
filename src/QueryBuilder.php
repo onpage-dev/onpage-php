@@ -2,6 +2,8 @@
 
 namespace OnPage;
 
+use Illuminate\Support\Collection;
+
 class QueryBuilder
 {
     private Resource $resource;
@@ -28,6 +30,10 @@ class QueryBuilder
     public function all(): ThingCollection
     {
         return ThingCollection::fromResponse($this->api, $this->api->get('things', $this->build('list')));
+    }
+    public function ids(): Collection
+    {
+        return collect($this->api->get('things', $this->build('ids')));
     }
     public function map(string $keyfield, string $valuefield = '_id', $lang = null): array
     {
