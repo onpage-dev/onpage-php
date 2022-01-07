@@ -82,7 +82,11 @@ $api->query('products')
 $cat = $api->query('categories')->first();
 echo $cat->val('name');
 echo $cat->val('dimension');
-echo $cat->val('description', 'fr'); // you can specify a language
+echo $cat->val('description', 'zh'); // you can specify a language
+
+// Or set the default language
+$api->schema->lang = 'zh';
+echo $cat->val('name'); // 再见
 ```
 
 #### Files
