@@ -12,6 +12,7 @@ class Schema
     private array $name_to_resource;
     private array $resources;
     public array $langs;
+    public string $lang;
 
     public function __construct(Api $api, object $json)
     {
@@ -19,6 +20,7 @@ class Schema
         $this->id = $json->id;
         $this->label = $json->label;
         $this->langs = $json->langs;
+        $this->lang = $this->langs[0];
         foreach ($json->resources as $res_json) {
             $res = new Resource($this->api, $res_json);
             $this->resources[] = $res;

@@ -34,7 +34,7 @@ class Field
         $identifier = $this->name;
         if ($this->is_translatable) {
             if (!$lang) {
-                $lang = $this->api->schema->langs[0];
+                $lang = $this->api->schema->lang;
             }
             $identifier .= "_$lang";
         }
