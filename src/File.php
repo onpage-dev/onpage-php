@@ -41,6 +41,6 @@ class File
         $name = $opts['name'] ?? true;
         if ($name && !is_string($name)) $name = $this->name;
         else if ($name === false) $name = null;
-        return $this->api->storageLink("{$this->token}{$suffix}", $this->name);
+        return $this->api->storageLink("{$this->token}{$suffix}", $name);
     }
 }
