@@ -40,15 +40,19 @@ class DataWriter
     }
     function save()
     {
-        $req = [
-            'resource' => $this->resource->name,
-            'things' => [],
-        ];
-        foreach ($this->edits as $edit) {
-            $req['things'][] = $edit->toArray();
+        $ret = [];
+        foreach (array_chunk($this->edits, 1000) as $chunk) {
+            $req = [
+                'resource' => $this->resource->name,
+                'things' => [],
+            ];
+            foreach ($chunk as $edit) {
+                $req['things'][] = $edit->toArray();
+            }
+            $res = $this->api->post('things/bulk', $req);
+            $ret = array_merge($ret, array_column($res, 'id'));
         }
-        $res = $this->api->post('things/bulk', $req);
         $this->edits = [];
-        return array_column($res, 'id');
+        return $ret;
     }
 }
