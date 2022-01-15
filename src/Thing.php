@@ -20,7 +20,8 @@ class Thing
         }
     }
 
-    function getOrder() : int {
+    function getOrder(): int
+    {
         return $this->json->order;
     }
 
@@ -35,14 +36,15 @@ class Thing
         if ($field_path == '_id') return [$this->id];
         if ($field_path == '_resource_id') return [$this->json->resource_id];
         if ($field_path == '_created_at') return [$this->json->created_at];
-        $field_path = explode('.', $field_path);
-        $field_name = array_shift($field_path);
-        if (!empty($field_path)) {
-            $related = $this->rel($field_name)->first();
+        $path = $this->resource()->resolveFieldPath($field_path);
+        $field = collect($path)->last();
+
+        if (count($path) > 1) {
+            $related = $this->rel($path->first()->name)->first();
             if (!$related) return [];
-            return $related->values(implode('.', $field_path), $lang, $field);
+            return $related->values($path->skip(1)->pluck('name')->implode('.'), $lang, $field);
         }
-        $field = $this->resolveField($field_name);
+    
         $codename = $field->identifier($lang);
         $values = $this->json->fields->{$codename} ?? null;
         if (is_null($values)) {

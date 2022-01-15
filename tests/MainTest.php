@@ -204,6 +204,7 @@ class MainTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $thing->rel('argomenti'));
         $arg = $thing->rel('argomenti')->first();
         $this->assertSame('Architetturale;Domestico;Commerciale;Industriale;Arredamento;', $arg->val('nota10'));
+        $this->assertSame('Architetturale;Domestico;Commerciale;Industriale;Arredamento;', $thing->val('argomenti.nota10'));
         foreach ($thing->rel('argomenti') as $arg) {
             $arg->val('nota10');
         }

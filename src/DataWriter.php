@@ -38,7 +38,9 @@ class DataWriter
         }
         return $ret;
     }
-    function save()
+
+    /** @return int[] */
+    function save(): array
     {
         $ret = [];
         foreach (array_chunk($this->edits, 1000) as $chunk) {
@@ -50,7 +52,7 @@ class DataWriter
                 $req['things'][] = $edit->toArray();
             }
             $res = $this->api->post('things/bulk', $req);
-            $ret = array_merge($ret, array_column($res, 'id'));
+            $ret = array_merge($ret, $res);
         }
         $this->edits = [];
         return $ret;

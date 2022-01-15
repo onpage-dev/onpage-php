@@ -2,6 +2,8 @@
 
 namespace OnPage;
 
+use OnPage\Exceptions\FieldNotFound;
+
 class Resource
 {
     public $id;
@@ -35,16 +37,36 @@ class Resource
         }
     }
 
-    public function fields() : array
+    public function fields(): array
     {
         return $this->fields;
     }
 
-    function writer() : DataWriter {
+    function writer(): DataWriter
+    {
         return new DataWriter($this->api, $this);
     }
 
-    function query() : QueryBuilder {
+    function query(): QueryBuilder
+    {
         return new QueryBuilder($this->api, $this);
+    }
+
+    function resolveFieldPath(string $field_path)
+    {
+        $field_path = explode('.', $field_path);
+        $current_res = $this;
+
+        /** @var Field[] */
+        $ret = [];
+        foreach ($field_path as $field_i => $field_name) {
+            $field = $current_res->field($field_name);
+            if (!$field) throw FieldNotFound::from($field_name);
+            $ret[] = $field;
+            if ($field_i + 1 < count($field_path)) {
+                $current_res = $field->relatedResource();
+            }
+        }
+        return collect($ret);
     }
 }
