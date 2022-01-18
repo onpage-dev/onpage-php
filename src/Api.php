@@ -12,6 +12,7 @@ class Api
     private int $req_count = 0;
     private bool $auto_save = true;
     private array $pending_writes = [];
+    public $allow_dynamic_relations = false;
 
     function __construct(string $endpoint, string $token)
     {

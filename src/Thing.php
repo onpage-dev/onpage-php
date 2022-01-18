@@ -70,6 +70,9 @@ class Thing
         $field = $this->resolveField($field_name);
         $codename = $field->identifier();
         if (!isset($this->relations[$codename])) {
+            if (!$this->api->allow_dynamic_relations) {
+                throw new \Exception("The relation $codename was not loaded");
+            }
             $with = [];
             if (!empty($path)) {
                 $with[] = implode('.', $path);
