@@ -37,6 +37,9 @@ class Resource
         }
     }
 
+    /**
+     * @return Field[]
+     */
     public function fields(): array
     {
         return $this->fields;

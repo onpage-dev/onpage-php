@@ -44,7 +44,7 @@ class Thing
             if (!$related) return [];
             return $related->values($path->skip(1)->pluck('name')->implode('.'), $lang, $field);
         }
-    
+
         $codename = $field->identifier($lang);
         $values = $this->json->fields->{$codename} ?? null;
         if (is_null($values)) {
@@ -56,7 +56,9 @@ class Thing
         if (in_array($field->type, ['file', 'image'])) {
             $values = array_map(function ($v) {
                 return new File($this->api, $v);
-            }, $values);
+            }, array_filter($values, function ($x) {
+                return !is_null($x);
+            }));
         }
         return $values;
     }

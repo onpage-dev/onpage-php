@@ -81,11 +81,20 @@ class Api
             $ns = $namespace ? "{$namespace}[{$key}]" : $key;
             if (is_null($value)) {
                 // Do nothing
-            } elseif (is_object($value) && $value instanceof File) {
+            } elseif (is_object($value) && $value instanceof FileUpload) {
                 $ret[] = [
                     'name' => $ns,
                     'filename' => basename($value->path),
                     'contents' => fopen($value->path, 'r'),
+                ];
+            } elseif (is_object($value) && $value instanceof File) {
+                $ret[] = [
+                    'name' => "{$ns}[token]",
+                    'contents' => $value->token,
+                ];
+                $ret[] = [
+                    'name' => "{$ns}[name]",
+                    'contents' => $value->name,
                 ];
             } elseif (is_scalar($value)) {
                 $ret[] = [

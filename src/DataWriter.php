@@ -3,6 +3,7 @@
 namespace OnPage;
 
 use OnPage\Exceptions\FieldNotFound;
+use OnPage\Exceptions\GenericException;
 
 class DataWriter
 {
@@ -19,9 +20,12 @@ class DataWriter
     {
         return $this->resource;
     }
-    function createThing(): ThingEditor
+    function createThing(string $id): ThingEditor
     {
-        return $this->edits[--$this->creations] = new ThingEditor($this);
+        $id = md5($id);
+        if (!isset($this->edits[$id])) $this->edits[$id] = new ThingEditor($this);
+
+        return $this->edits[$id];
     }
     function forThing(int $id): ThingEditor
     {
@@ -51,7 +55,13 @@ class DataWriter
             foreach ($chunk as $edit) {
                 $req['things'][] = $edit->toArray();
             }
-            $res = $this->api->post('things/bulk', $req);
+            try {
+                $res = $this->api->post('things/bulk', $req);
+                
+            } catch (\GuzzleHttp\Exception\ClientException $e) {
+                $res = json_decode($e->getResponse()->getBody());
+                throw new GenericException($res->message);
+            }
             $ret = array_merge($ret, $res);
         }
         $this->edits = [];

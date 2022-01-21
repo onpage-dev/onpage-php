@@ -32,7 +32,7 @@ class Schema
         }
     }
 
-    public function resource($id): Resource
+    public function resource($id):?Resource
     {
         if (is_numeric($id)) {
             return $this->id_to_resource[$id] ?? null;
