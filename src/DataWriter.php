@@ -11,6 +11,8 @@ class DataWriter
     private Resource $resource;
     private array $edits = [];
     private $creations = 0;
+    private bool $ignore_invalid_urls = false;
+
     function __construct(Api $api, Resource $resource)
     {
         $this->api = $api;
@@ -43,6 +45,10 @@ class DataWriter
         return $ret;
     }
 
+    function ignoreInvalidUrls(bool $ignore = true) {
+        $this->ignore_invalid_urls = $ignore;
+    }
+
     /** @return int[] */
     function save(): array
     {
@@ -51,6 +57,9 @@ class DataWriter
             $req = [
                 'resource' => $this->resource->name,
                 'things' => [],
+                'options' => [
+                    'ignore_invalid_urls' => $this->ignore_invalid_urls,
+                ],
             ];
             foreach ($chunk as $edit) {
                 $req['things'][] = $edit->toArray();
