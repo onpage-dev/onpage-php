@@ -23,17 +23,22 @@ class ThingEditor
         return $this->updater->resource();
     }
 
-    function set(string $field_name, $values, $lang = null): ThingEditor
+    // Alias for setValues() with only one value
+    function set(string $field_name, $value, $lang = null, bool $append = false): ThingEditor
+    {
+        return $this->setValues($field_name, [$value], $lang, $append);
+    }
+
+    // Set all values for specified field-lang combination
+    function setValues(string $field_name, array $values, $lang = null, bool $append = false)
     {
         $field = $this->resource()->field($field_name);
         if (!$field) throw FieldNotFound::from($field_name);
 
-        if (!$field->is_multiple) {
-            $values = [$values];
-        } elseif (!is_array($values)) {
-            throw new GenericException("The field $field->name is multiple, therefore you must pass an array of values");
+        if ($append) {
+            $values = array_merge($this->fields[$field_name][$lang] ?? [], $values);
         }
-        $this->fields[$field_name][$lang] = array_merge($this->fields[$field_name][$lang] ?? [], $values);
+        $this->fields[$field_name][$lang] = $values;
         return $this;
     }
 
