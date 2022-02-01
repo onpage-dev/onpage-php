@@ -12,15 +12,21 @@ class ThingEditor
     private array $relations = [];
     private DataWriter $updater;
 
-    function __construct(DataWriter $updater, int $id = null)
+    function __construct(DataWriter $updater, int $id = null, string $lang = null)
     {
         $this->id = $id;
         $this->updater = $updater;
+        $this->lang = $lang;
     }
 
     private function resource(): Resource
     {
         return $this->updater->resource();
+    }
+
+    function hasData(): bool
+    {
+        return count($this->fields) || count($this->relations);
     }
 
     // Alias for setValues() with only one value
@@ -34,6 +40,10 @@ class ThingEditor
     {
         $field = $this->resource()->field($field_name);
         if (!$field) throw FieldNotFound::from($field_name);
+
+        if ($field->is_translatable && !$lang) {
+            $lang = $this->lang ?? $this->updater->schema()->lang;
+        }
 
         if ($append) {
             $values = array_merge($this->fields[$field_name][$lang] ?? [], $values);
@@ -59,6 +69,7 @@ class ThingEditor
         }
         return [
             'id' => $this->id,
+            'lang' => $this->lang,
             'fields' => $fields,
             'relations' => $this->relations,
         ];

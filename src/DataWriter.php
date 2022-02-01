@@ -22,6 +22,10 @@ class DataWriter
     {
         return $this->resource;
     }
+    function schema(): Schema
+    {
+        return $this->api->schema;
+    }
     function createThing(string $id): ThingEditor
     {
         $id = md5($id);
@@ -29,10 +33,10 @@ class DataWriter
 
         return $this->edits[$id];
     }
-    function forThing(int $id): ThingEditor
+    function forThing(int $id, string $lang = null): ThingEditor
     {
         if (!isset($this->edits[$id])) {
-            $this->edits[$id] = new ThingEditor($this, $id);
+            $this->edits[$id] = new ThingEditor($this, $id, $lang);
         }
         return $this->edits[$id];
     }
@@ -45,7 +49,8 @@ class DataWriter
         return $ret;
     }
 
-    function ignoreInvalidUrls(bool $ignore = true) : DataWriter {
+    function ignoreInvalidUrls(bool $ignore = true): DataWriter
+    {
         $this->ignore_invalid_urls = $ignore;
         return $this;
     }
@@ -53,8 +58,11 @@ class DataWriter
     /** @return int[] */
     function save(): array
     {
+        $edits = array_filter($this->edits, function (ThingEditor $edit) {
+            return $edit->hasData();
+        });
         $ret = [];
-        foreach (array_chunk($this->edits, 1000) as $chunk) {
+        foreach (array_chunk($edits, 1000) as $chunk) {
             $req = [
                 'resource' => $this->resource->name,
                 'things' => [],
@@ -67,7 +75,6 @@ class DataWriter
             }
             try {
                 $res = $this->api->post('things/bulk', $req);
-                
             } catch (\GuzzleHttp\Exception\ClientException $e) {
                 $res = json_decode($e->getResponse()->getBody());
                 throw new GenericException($res->message);
