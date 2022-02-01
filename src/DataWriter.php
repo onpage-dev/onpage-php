@@ -45,8 +45,9 @@ class DataWriter
         return $ret;
     }
 
-    function ignoreInvalidUrls(bool $ignore = true) {
+    function ignoreInvalidUrls(bool $ignore = true) : DataWriter {
         $this->ignore_invalid_urls = $ignore;
+        return $this;
     }
 
     /** @return int[] */
