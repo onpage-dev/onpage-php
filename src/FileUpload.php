@@ -4,9 +4,7 @@ namespace OnPage;
 
 class FileUpload
 {
-    public $path = null;
-
-    public function __construct(string $path)
+    public function __construct(public string $path)
     {
         $this->path = $path;
     }

@@ -62,7 +62,7 @@ class Api
     private function containsFiles(array $data)
     {
         foreach ($data as $value) {
-            if (is_object($value) && $value instanceof File) {
+            if (is_object($value) && $value instanceof FileUpload) {
                 return true;
             } elseif (is_array($value)) {
                 if ($this->containsFiles($value)) {
