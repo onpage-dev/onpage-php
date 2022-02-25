@@ -2,9 +2,7 @@
 
 namespace OnPage;
 
-use Countable;
 use Illuminate\Support\Collection;
-use Iterator;
 
 class ThingCollection extends Collection
 {

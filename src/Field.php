@@ -45,6 +45,11 @@ class Field
         return $this->api->schema->resource($this->json->resource_id);
     }
 
+    function isMedia(): bool
+    {
+        return in_array($this->type, ['file', 'image']);
+    }
+
     function relatedResource(): Resource
     {
         if (!$this->rel_res_id) {

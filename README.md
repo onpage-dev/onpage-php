@@ -6,7 +6,7 @@ With this library you can easy query your data using an On Page ® API token.
 
 ```
 composer config repositories.onpage vcs 'https://github.com/onpage-dev/onpage-php.git'
-composer require onpage-dev/onpage-php:^v1
+composer require onpage-dev/onpage-php:^v2
 ```
 
 Of course, remember to include the composer autoload:

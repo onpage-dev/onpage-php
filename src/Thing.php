@@ -2,6 +2,7 @@
 
 namespace OnPage;
 
+use Illuminate\Support\Collection;
 use OnPage\Exceptions\FieldNotFound;
 
 class Thing
@@ -25,21 +26,30 @@ class Thing
         return $this->json->order;
     }
 
+    /**
+     * Returns the first value in the given field
+     * @return null|string|bool|int|array|File
+     */
     public function val(string $field_path, string $lang = null) //: null | string | bool | int | array | File
     {
-        $values = $this->values($field_path, $lang, $field);
-        if ($field->is_multiple) return $values;
-        return $values[0] ?? null;
+        return $this->values($field_path, $lang, $field)->first();
     }
-    public function values(string $field_path, string $lang = null, Field &$field = null): array
+
+    /**
+     * Returns all the values in the given field
+     * @return Collection
+     */
+    public function values(string $field_path, string $lang = null, Field &$field = null): Collection
     {
         if ($field_path == '_id') return [$this->id];
         if ($field_path == '_resource_id') return [$this->json->resource_id];
         if ($field_path == '_created_at') return [$this->json->created_at];
         $path = $this->resource()->resolveFieldPath($field_path);
-        $field = collect($path)->last();
+        /** @var Field */
+        $field = $path->last();
 
-        if (count($path) > 1) {
+        if ($path->count() > 1) {
+            /** @var Thing */
             $related = $this->rel($path->first()->name)->first();
             if (!$related) return [];
             return $related->values($path->skip(1)->pluck('name')->implode('.'), $lang, $field);
@@ -53,13 +63,14 @@ class Thing
         if (!$field->is_multiple) {
             $values = [$values];
         }
-        if (in_array($field->type, ['file', 'image'])) {
-            $values = array_map(function ($v) {
+        $values = collect($values);
+
+        if ($field->isMedia()) {
+            $values->transform(function ($v) {
                 return new File($this->api, $v);
-            }, array_filter($values, function ($x) {
-                return !is_null($x);
-            }));
+            });
         }
+        
         return $values;
     }
 

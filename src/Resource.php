@@ -2,6 +2,7 @@
 
 namespace OnPage;
 
+use Illuminate\Support\Collection;
 use OnPage\Exceptions\FieldNotFound;
 
 class Resource
@@ -55,7 +56,10 @@ class Resource
         return new QueryBuilder($this->api, $this);
     }
 
-    function resolveFieldPath(string $field_path)
+    /**
+     * @return Collection<Field>
+     */
+    function resolveFieldPath(string $field_path): Collection
     {
         $field_path = explode('.', $field_path);
         $current_res = $this;
