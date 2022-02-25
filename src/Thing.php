@@ -41,9 +41,9 @@ class Thing
      */
     public function values(string $field_path, string $lang = null, Field &$field = null): Collection
     {
-        if ($field_path == '_id') return [$this->id];
-        if ($field_path == '_resource_id') return [$this->json->resource_id];
-        if ($field_path == '_created_at') return [$this->json->created_at];
+        if ($field_path == '_id') return collect([$this->id]);
+        if ($field_path == '_resource_id') return collect([$this->json->resource_id]);
+        if ($field_path == '_created_at') return collect([$this->json->created_at]);
         $path = $this->resource()->resolveFieldPath($field_path);
         /** @var Field */
         $field = $path->last();
@@ -51,14 +51,15 @@ class Thing
         if ($path->count() > 1) {
             /** @var Thing */
             $related = $this->rel($path->first()->name)->first();
-            if (!$related) return [];
-            return $related->values($path->skip(1)->pluck('name')->implode('.'), $lang, $field);
+            if (!$related) return collect([]);
+            $child_path = $path->skip(1)->pluck('name')->implode('.');
+            return $related->values($child_path, $lang, $field);
         }
 
         $codename = $field->identifier($lang);
         $values = $this->json->fields->{$codename} ?? null;
         if (is_null($values)) {
-            return [];
+            return collect([]);
         }
         if (!$field->is_multiple) {
             $values = [$values];
