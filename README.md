@@ -6,7 +6,12 @@ With this library you can easy query your data using an On Page ® API token.
 
 ```
 composer config repositories.onpage vcs 'https://github.com/onpage-dev/onpage-php.git'
-composer require onpage-dev/onpage-php:^v2
+composer require onpage-dev/onpage-php:^v1.1
+```
+
+To update to the latest version, you can launch
+```
+composer require onpage-dev/onpage-php:^v1.1
 ```
 
 Of course, remember to include the composer autoload:
@@ -78,6 +83,9 @@ $api->query('products')
 
 ### Get thing values
 
+Use the val() function to get the first value in a field.
+Use the values() function to get all values in a field as a collection.
+
 ```php
 $cat = $api->query('categories')->first();
 echo $cat->val('name');
@@ -87,6 +95,9 @@ echo $cat->val('description', 'zh'); // you can specify a language
 // Or set the default language
 $api->schema->lang = 'zh';
 echo $cat->val('name'); // 再见
+
+// The values function is useful for multivalue fields, it will return a laravel collection of values.
+echo $cat->values('bullet_points')->implode('; ');
 ```
 
 #### Files
