@@ -2,6 +2,7 @@
 
 namespace OnPage;
 
+use Illuminate\Support\Collection;
 use OnPage\Exceptions\FieldNotFound;
 use OnPage\Exceptions\GenericException;
 
@@ -36,8 +37,10 @@ class ThingEditor
     }
 
     // Set all values for specified field-lang combination
-    function setValues(string $field_name, array $values, $lang = null, bool $append = false)
+    function setValues(string $field_name, array|Collection $values, $lang = null, bool $append = false)
     {
+        if (is_object($values)) $values = $values->all();
+        
         $field = $this->resource()->field($field_name);
         if (!$field) throw FieldNotFound::from($field_name);
 
