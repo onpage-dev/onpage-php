@@ -26,12 +26,12 @@ class DataWriter
     {
         return $this->api->schema;
     }
-    function createThing(string $id): ThingEditor
+    function createThing(string $local_key = null): ThingEditor
     {
-        $id = md5($id);
-        if (!isset($this->edits[$id])) $this->edits[$id] = new ThingEditor($this);
+        $local_key = md5($local_key ?? microtime(true));
+        if (!isset($this->edits[$local_key])) $this->edits[$local_key] = new ThingEditor($this);
 
-        return $this->edits[$id];
+        return $this->edits[$local_key];
     }
     function forThing(int $id, string $lang = null): ThingEditor
     {
