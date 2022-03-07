@@ -6,7 +6,7 @@ class File
 {
     public $name;
     public $token;
-    private $api;
+    private Api $api;
 
     function __construct(Api $api, object $file)
     {
@@ -34,7 +34,7 @@ class File
 
         if ($suffix || isset($opts['ext'])) {
             if (!isset($opts['ext'])) {
-                $opts['ext'] = 'jpg';
+                $opts['ext'] = $this->api->thumbnail_format;
             }
             $suffix .= ".{$opts['ext']}";
         }

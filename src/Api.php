@@ -13,6 +13,7 @@ class Api
     private bool $auto_save = true;
     private array $pending_writes = [];
     public $allow_dynamic_relations = false;
+    public string $thumbnail_format = 'png';
 
     function __construct(string $endpoint, string $token)
     {
