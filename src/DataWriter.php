@@ -10,7 +10,6 @@ class DataWriter
     private Api $api;
     private Resource $resource;
     private array $edits = [];
-    private $creations = 0;
     private bool $ignore_invalid_urls = false;
 
     function __construct(Api $api, Resource $resource)
@@ -26,11 +25,11 @@ class DataWriter
     {
         return $this->api->schema;
     }
-    function createThing(string $local_key = null): ThingEditor
+    function createThing(string $local_key = null, string $lang = null): ThingEditor
     {
-        $local_key = md5($local_key ?? microtime(true));
-        if (!isset($this->edits[$local_key])) $this->edits[$local_key] = new ThingEditor($this);
-
+        if (is_null($local_key)) $local_key = uniqid();
+        $local_key = 'thing_' . $local_key;
+        if (!isset($this->edits[$local_key])) $this->edits[$local_key] = new ThingEditor($this, null, $lang);
         return $this->edits[$local_key];
     }
     function forThing(int $id, string $lang = null): ThingEditor
