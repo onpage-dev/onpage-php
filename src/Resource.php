@@ -31,19 +31,22 @@ class Resource
 
     public function field($id): ?Field
     {
+        $field = null;
         if (is_numeric($id)) {
-            return $this->id_to_field[$id] ?? null;
+            $field = $this->id_to_field[$id] ?? null;
         } else {
-            return $this->name_to_field[$id] ?? null;
+            $field = $this->name_to_field[$id] ?? null;
         }
+        $field?->markAsUsed();
+        return $field;
     }
 
     /**
-     * @return Field[]
+     * @return Collection<Field>
      */
-    public function fields(): array
+    public function fields(): Collection
     {
-        return $this->fields;
+        return collect($this->fields);
     }
 
     function writer(): DataWriter

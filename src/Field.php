@@ -12,6 +12,7 @@ class Field
     public array $labels;
     public bool $is_translatable;
     public bool $is_multiple;
+    private bool $has_been_used = false;
     public ?int $rel_res_id;
     public ?int $rel_field_id;
     private Api $api;
@@ -27,6 +28,13 @@ class Field
         $this->type = $json->type;
         $this->rel_res_id = $json->rel_res_id;
         $this->rel_field_id = $json->rel_field_id;
+    }
+
+    function markAsUsed() {
+        $this->has_been_used = true;
+    }
+    function hasBeenUsed() {
+        return $this->has_been_used;
     }
 
     function identifier(string $lang = null): string

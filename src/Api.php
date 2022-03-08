@@ -148,4 +148,41 @@ class Api
         }
         return $url;
     }
+
+    /**
+     * Dumps a csv containing information about
+     * the used fields
+     */
+    function dumpUsedFields(string $csv_path)
+    {
+        $file = fopen($csv_path, 'wb');
+
+        fputcsv($file, [
+            'Resource',
+            'Resource name',
+            'Field',
+            'Field name',
+            'Field type',
+        ]);
+
+        foreach ($this->schema->resources() as $res) {
+            $used = false;
+            foreach ($res->fields() as $field) {
+                if (!$field->hasBeenUsed()) continue;
+                $used = true;
+                fputcsv($file, [
+                    $res->label,
+                    $res->name,
+                    $field->label,
+                    $field->name,
+                    $field->type,
+                ]);
+            }
+            if ($used) {
+                fputcsv($file, []);
+            }
+        }
+
+        fclose($file);
+    }
 }

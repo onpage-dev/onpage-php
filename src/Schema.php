@@ -2,6 +2,8 @@
 
 namespace OnPage;
 
+use Illuminate\Support\Collection;
+
 class Schema
 {
     public $id;
@@ -32,7 +34,7 @@ class Schema
         }
     }
 
-    public function resource($id):?Resource
+    public function resource($id): ?Resource
     {
         if (is_numeric($id)) {
             return $this->id_to_resource[$id] ?? null;
@@ -40,12 +42,16 @@ class Schema
             return $this->name_to_resource[$id] ?? null;
         }
     }
-    public function resources(): array
+
+    /** @return Collection<Resource> */
+    public function resources(): Collection
     {
-        return array_values($this->id_to_resource);
+        return collect($this->id_to_resource);
     }
-    function fields(): array
+
+    /** @return Collection<Field> */
+    function fields(): Collection
     {
-        return array_values($this->id_to_field);
+        return collect($this->id_to_field);
     }
 }
