@@ -130,4 +130,9 @@ class QueryBuilder
         $this->filters[] = $filter;
         return $this;
     }
+
+    public function find(int $id): ?Thing
+    {
+        return $this->where("_id", $id)->first();
+    }
 }
