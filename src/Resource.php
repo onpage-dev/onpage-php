@@ -7,8 +7,9 @@ use OnPage\Exceptions\FieldNotFound;
 
 class Resource
 {
-    public $id;
-    public $label;
+    public int $id;
+    public string $label;
+    public string $name;
     public array $labels;
     private array $fields;
     private array $id_to_field;
