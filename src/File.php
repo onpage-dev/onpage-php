@@ -4,8 +4,9 @@ namespace OnPage;
 
 class File
 {
-    public $name;
-    public $token;
+    public string $name;
+    public string $token;
+    public string $ext;
     private Api $api;
 
     function __construct(Api $api, object $file)
@@ -13,18 +14,18 @@ class File
         $this->api = $api;
         $this->name = $file->name;
         $this->token = $file->token;
+        $this->ext = $file->ext;
     }
 
     function isImage(): bool
     {
-        $ext = pathinfo($this->name, PATHINFO_EXTENSION);
-        return in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif']);
+        return in_array(strtolower($this->ext), ['png', 'gif', 'jpg', 'webp', 'eps', 'dwg', 'svg', 'tiff']);
     }
 
     function link(array $opts = []): string
     {
         $suffix = '';
-        if ($this->isImage() && (isset($opts['x']) || isset($opts['y']))) {
+        if (isset($opts['x']) || isset($opts['y'])) {
             $suffix .= @".{$opts['x']}x{$opts['y']}";
 
             if (isset($opts['contain'])) {
