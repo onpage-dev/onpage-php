@@ -41,7 +41,9 @@ class QueryBuilder
     public function cursor(callable $callback, int $request_size = 100): Collection
     {
         $ids = $this->ids();
-        return $ids->chunk($request_size)->flatMap(function (Collection $id_chunk) use ($callback) {
+        $done = 0;
+        $total = $ids->count();
+        return $ids->chunk($request_size)->flatMap(function (Collection $id_chunk) use ($callback, &$done, $total) {
             $query = clone $this;
             $query->filters = [
                 ['_id', 'in', $id_chunk],
@@ -50,7 +52,7 @@ class QueryBuilder
             return $id_chunk
                 ->map(fn (int $id) => $thing_chunk[$id])
                 ->filter()
-                ->map(fn (Thing $thing) => $callback($thing));
+                ->map(fn (Thing $thing) => $callback($thing, $done, $total));
         });
     }
 
