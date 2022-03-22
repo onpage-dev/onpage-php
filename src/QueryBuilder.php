@@ -31,6 +31,30 @@ class QueryBuilder
     {
         return ThingCollection::fromResponse($this->api, $this->api->get('things', $this->build('list')));
     }
+
+    /**
+     * Calls the given closure passing one thing at a time
+     * the things are loaded one chunk at a time to reduce total memory
+     * and reduce latency
+     * @return Collection the return value of each closure call
+     */
+    public function cursor(callable $callback, int $request_size = 100): Collection
+    {
+        $ids = $this->ids();
+        return $ids->chunk($request_size)->flatMap(function (Collection $id_chunk) use ($callback) {
+            $query = clone $this;
+            $query->filters = [
+                ['_id', 'in', $id_chunk],
+            ];
+            $thing_chunk = $query->all()->keyBy('id');
+            return $id_chunk
+                ->map(fn (int $id) => $thing_chunk[$id])
+                ->filter()
+                ->map(fn (Thing $thing) => $callback($thing));
+        });
+    }
+
+    /** @return Collection<int> */
     public function ids(): Collection
     {
         return collect($this->api->get('things', $this->build('ids')));
