@@ -46,7 +46,7 @@ class QueryBuilder
         return $ids->chunk($request_size)->flatMap(function (Collection $id_chunk) use ($callback, &$done, $total) {
             $query = clone $this;
             $query->filters = [
-                ['_id', 'in', $id_chunk],
+                ['_id', 'in', $id_chunk->values()->all()],
             ];
             $thing_chunk = $query->all()->keyBy('id');
             return $id_chunk
