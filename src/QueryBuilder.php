@@ -52,7 +52,11 @@ class QueryBuilder
             return $id_chunk
                 ->map(fn (int $id) => $thing_chunk[$id])
                 ->filter()
-                ->map(fn (Thing $thing) => $callback($thing, $done++, $total));
+                ->map(function (Thing $thing) use ($callback, &$done, $total) {
+                    $ret = $callback($thing, $done, $total);
+                    $done += 1;
+                    return $ret;
+                });
         });
     }
 
