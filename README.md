@@ -50,7 +50,7 @@ foreach ($res->fields() as $field) {
 
 ```php
 // Retrieve all records of a resource (returns a laravel collection of \OnPage\Thing)
-$products = $api->query('products')->all();
+$products = $api->schema->query('products')->all();
 foreach ($products as $prod) {
     // ...
 }
