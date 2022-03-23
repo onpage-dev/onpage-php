@@ -28,23 +28,25 @@ class Thing
 
     /**
      * Returns the first value in the given field
+     * @param string|Field $field_path
      * @return null|string|bool|int|array|File
      */
-    public function val(string $field_path, string $lang = null) //: null | string | bool | int | array | File
+    public function val($field_path, string $lang = null) //: null | string | bool | int | array | File
     {
         return $this->values($field_path, $lang, $field)->first();
     }
 
     /**
      * Returns all the values in the given field
+     * @param string|Field $field_path
      * @return Collection
      */
-    public function values(string $field_path, string $lang = null, Field &$field = null): Collection
+    public function values($field_path, string $lang = null, Field &$field = null): Collection
     {
         if ($field_path == '_id') return collect([$this->id]);
         if ($field_path == '_resource_id') return collect([$this->json->resource_id]);
         if ($field_path == '_created_at') return collect([$this->json->created_at]);
-        $path = $this->resource()->resolveFieldPath($field_path);
+        $path = is_string($field_path) ? $this->resource()->resolveFieldPath($field_path) : collect($field_path);
         /** @var Field */
         $field = $path->last();
 
@@ -71,7 +73,7 @@ class Thing
                 return new File($this->api, $v);
             });
         }
-        
+
         return $values;
     }
 

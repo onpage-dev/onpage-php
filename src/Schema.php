@@ -54,4 +54,9 @@ class Schema
     {
         return collect($this->id_to_field);
     }
+
+    function query(string $resource): QueryBuilder
+    {
+        return $this->resource($resource)->query();
+    }
 }

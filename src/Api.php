@@ -124,7 +124,7 @@ class Api
 
     function query(string $resource): QueryBuilder
     {
-        return $this->schema->resource($resource)->query();
+        return $this->schema->query($resource);
     }
 
     public function getRequestCount(): int
@@ -138,8 +138,6 @@ class Api
     }
     function storageLink(string $token, string $name = null): string
     {
-
-        $base_uri = $this->http->getConfig('base_uri');
         $url = "{$this->api_url}/storage/$token";
         if ($name) {
             $url .= '?' . http_build_query([
