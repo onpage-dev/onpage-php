@@ -21,7 +21,7 @@ class Thing
         }
     }
 
-    function getOrder(): int
+    function getOrder(): float
     {
         return $this->json->order;
     }
