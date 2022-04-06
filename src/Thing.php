@@ -26,7 +26,7 @@ class Thing
         return $this->json->order;
     }
 
-    function getFolderID(): int
+    function getFolderID():? int
     {
         return $this->json->default_folder_id;
     }
