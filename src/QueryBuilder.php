@@ -165,4 +165,17 @@ class QueryBuilder
     {
         return $this->where("_id", $id)->first();
     }
+
+    function whereOneOf(callable $fn)
+    {
+        $builder = new QueryBuilder($this->api, $this->resource);
+        $fn($builder);
+        if (!empty($builder->filters)) {
+            $this->filters[] = [
+                '_or',
+                ...$builder->filters,
+            ];
+        }
+        return $this;
+    }
 }
