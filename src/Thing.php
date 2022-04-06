@@ -26,6 +26,11 @@ class Thing
         return $this->json->order;
     }
 
+    function getFolderID(): int
+    {
+        return $this->json->default_folder_id;
+    }
+
     /**
      * Returns the first value in the given field
      * @param string|Field $field_path
