@@ -38,7 +38,7 @@ class Resource
         } else {
             $field = $this->name_to_field[$id] ?? null;
         }
-        $field?->markAsUsed();
+        if ($field) $field->markAsUsed();
         return $field;
     }
 
