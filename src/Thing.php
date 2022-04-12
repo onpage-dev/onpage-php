@@ -23,7 +23,7 @@ class Thing
 
     function getOrder(): float
     {
-        return $this->json->order;
+        return $this->id / 5_000_000_000 + $this->json->order;
     }
 
     function getFolderID():? int
