@@ -217,6 +217,8 @@ $foo->set('description', 'Custom language description', 'fr'); // you can specif
 
 $pat = $writer->createThing();
 $pat->set('name', 'Mr. Pat');
+$foo->set('image', new \OnPage\FileUpload('/path/to/bird.jpg')); // upload file
+$foo->set('cover', 'https://mysite.com/bird_cover.jpg'); // specify file by url
 
 // Save all the edits at once using the save method
 $writer->save();
