@@ -27,9 +27,17 @@ class QueryBuilder
         return $this;
     }
 
-    public function all(): ThingCollection
+    public function all(int $chunk_size = 0): ThingCollection
     {
-        return ThingCollection::fromResponse($this->api, $this->api->get('things', $this->build('list')));
+        if ($chunk_size>0) {
+            $things = [];
+            $this->cursor(function($thing) use (&$things) {
+                $things[] = $thing;
+            }, $chunk_size);
+            return new ThingCollection($things);
+        } else {
+            return ThingCollection::fromResponse($this->api, $this->api->get('things', $this->build('list')));
+        }
     }
 
     /**
