@@ -73,10 +73,10 @@ class QueryBuilder
     {
         return collect($this->api->get('things', $this->build('ids')));
     }
-    public function map(string $keyfield, string $valuefield = '_id', $lang = null): array
+    public function map(string $keyfield, string $valuefield = '_id', $lang = null, int $chunk_size = 0): array
     {
         $this->loadFields([$keyfield, $valuefield]);
-        return $this->all()->mapWithKeys(function (Thing $thing)  use ($keyfield, $valuefield, $lang) {
+        return $this->all($chunk_size)->mapWithKeys(function (Thing $thing)  use ($keyfield, $valuefield, $lang) {
             $key = $thing->values($keyfield, $lang)[0] ?? '';
             $value = $thing->values($valuefield, $lang)[0] ?? '';
             return [
