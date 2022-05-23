@@ -15,7 +15,7 @@ class Api
     public $allow_dynamic_relations = false;
     public string $thumbnail_format = 'png';
 
-    function __construct(string $endpoint, string $token)
+    function __construct(string $endpoint, string $token, float $timeout = 60000)
     {
         if (!preg_match('/^https?:/', $endpoint)) {
             $endpoint = "https://$endpoint.onpage.it/api/";
@@ -25,7 +25,7 @@ class Api
 
         $this->api_url = $endpoint;
         $this->http = new Client([
-            'timeout' => 60000,
+            'timeout' => $timeout,
             'base_uri' => "{$this->api_url}/view/{$token}/",
         ]);
         $this->loadSchema();
