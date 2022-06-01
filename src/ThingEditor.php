@@ -12,12 +12,17 @@ class ThingEditor
     private array $fields = [];
     private array $relations = [];
     private DataWriter $updater;
+    private ?array $langs = null;
 
-    function __construct(DataWriter $updater, int $id = null, string $lang = null)
+    /**
+     * @param string[]|string|null $langs
+     */
+    function __construct(DataWriter $updater, int $id = null, $langs = null)
     {
         $this->id = $id;
         $this->updater = $updater;
-        $this->lang = $lang;
+        if (is_string($langs)) $langs = [$langs];
+        $this->langs = $langs;
     }
 
     private function resource(): Resource
@@ -48,7 +53,7 @@ class ThingEditor
         if (!$field) throw FieldNotFound::from($field_name);
 
         if ($field->is_translatable && !$lang) {
-            $lang = $this->lang ?? $this->updater->schema()->lang;
+            $lang = $this->langs[0] ?? $this->updater->schema()->lang;
         }
 
         if ($append) {
@@ -75,7 +80,7 @@ class ThingEditor
         }
         return [
             'id' => $this->id,
-            'lang' => $this->lang,
+            'langs' => $this->langs,
             'fields' => $fields,
             'relations' => $this->relations,
         ];

@@ -175,7 +175,7 @@ $cat = $api->query('categories')
     ->first();
 ```
 
-### Creating things
+### Creating and updating things
 
 ```php
 $resource = $api->resource('categories');
@@ -186,7 +186,7 @@ $foo->set('name', 'Mr. Foo');
 $foo->set('description', 'Default language description');
 $foo->set('description', 'Custom language description', 'fr'); // you can specify language
 
-$pat = $writer->createThing();
+$pat = $writer->updateThing(12345); // specify the thing id
 $pat->set('name', 'Mr. Pat');
 
 // Save all the edits at once using the save method

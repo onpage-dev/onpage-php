@@ -25,17 +25,21 @@ class DataWriter
     {
         return $this->api->schema;
     }
-    function createThing(string $local_key = null, string $lang = null): ThingEditor
+    function createThing(string $local_key = null, $langs = null): ThingEditor
     {
         if (is_null($local_key)) $local_key = uniqid();
         $local_key = 'thing_' . $local_key;
-        if (!isset($this->edits[$local_key])) $this->edits[$local_key] = new ThingEditor($this, null, $lang);
+        if (!isset($this->edits[$local_key])) $this->edits[$local_key] = new ThingEditor($this, null, $langs);
         return $this->edits[$local_key];
     }
-    function forThing(int $id, string $lang = null): ThingEditor
+    function forThing(int $id, $langs = null): ThingEditor
+    {
+        return $this->updateThing($id, $langs);
+    }
+    function updateThing(int $id, $langs = null): ThingEditor
     {
         if (!isset($this->edits[$id])) {
-            $this->edits[$id] = new ThingEditor($this, $id, $lang);
+            $this->edits[$id] = new ThingEditor($this, $id, $langs);
         }
         return $this->edits[$id];
     }
