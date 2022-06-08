@@ -110,6 +110,31 @@ class Thing
         return $rel;
     }
 
+
+    /**
+     * Returns the first file in the given field
+     * @param string|Field $field_path
+     * @return ?File
+     */
+    public function file($field_path, string $lang = null): ?File
+    {
+        $ret = $this->val($field_path, $lang);
+        if ($ret instanceof File) {
+            return $ret;
+        }
+    }
+    /**
+     * Returns all the files in the given field
+     * @param string|Field $field_path
+     * @return Collection<int,File>
+     */
+    public function files($field_path, string $lang = null): Collection
+    {
+        $ret = $this->values($field_path, $lang, $field);
+        if (!$field->isMedia()) return collect();
+        return $ret;
+    }
+
     private function resolveField(string $field_name): Field
     {
         $res = $this->resource();
