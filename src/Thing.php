@@ -122,6 +122,7 @@ class Thing
         if ($ret instanceof File) {
             return $ret;
         }
+        return null;
     }
     /**
      * Returns all the files in the given field
