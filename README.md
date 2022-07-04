@@ -10,6 +10,7 @@ composer require onpage-dev/onpage-php:^v1.1
 ```
 
 To update to the latest version, you can launch
+
 ```
 composer require onpage-dev/onpage-php:^v1.1
 ```
@@ -148,19 +149,7 @@ $api->query('products')->map('code', 'title');
 ### Get thing relations
 
 ```php
-$cat = $api->query('categories')->first();
-$subcategories = $cat->rel('subcategories');
-foreach ($subcategories as $subcategory) {
-    echo $subcategory->val('name');
-}
-
-// You can also get nested relations in one shot
-$products = $cat->rel('subcategories.products');
-```
-
-### Preload thing relations
-
-```php
+// You need to specify the relations using the "with" method
 $cat = $api->query('categories')
     ->with('subcategories')
     ->first();
@@ -173,6 +162,17 @@ foreach ($subcategories as $subcategory) {
 $cat = $api->query('categories')
     ->with('subcategories.articles.colors')
     ->first();
+
+// Of course you can use it with the ->all() method
+$products_with_colors = $api->query('products')
+    ->with('colors')
+    ->all();
+foreach ($products_with_colors as $prod) {
+    echo $prod->val('name');
+    foreach ($prod->colors as $color) {
+        echo $color->val('name');
+    }
+}
 ```
 
 ### Creating and updating things
@@ -192,6 +192,7 @@ $pat->set('name', 'Mr. Pat');
 // Save all the edits at once using the save method
 $writer->save();
 ```
+
 ### Updating a record
 
 ```php
