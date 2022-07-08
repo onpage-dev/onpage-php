@@ -27,11 +27,22 @@ class QueryBuilder
         return $this;
     }
 
+    /**
+     * @return Collection<int,Thing>
+     */
+    public function get(int $chunk_size = 0): ThingCollection
+    {
+        return $this->all($chunk_size);
+    }
+
+    /**
+     * @return Collection<int,Thing>
+     */
     public function all(int $chunk_size = 0): ThingCollection
     {
-        if ($chunk_size>0) {
+        if ($chunk_size > 0) {
             $things = [];
-            $this->cursor(function($thing) use (&$things) {
+            $this->cursor(function ($thing) use (&$things) {
                 $things[] = $thing;
             }, $chunk_size);
             return new ThingCollection($things);

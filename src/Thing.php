@@ -26,7 +26,7 @@ class Thing
         return $this->id / 100_000_000 + $this->json->order;
     }
 
-    function getFolderID():? int
+    function getFolderID(): ?int
     {
         return $this->json->default_folder_id;
     }
@@ -44,7 +44,7 @@ class Thing
     /**
      * Returns all the values in the given field
      * @param string|Field $field_path
-     * @return Collection
+     * @return Collection<int,int|float|string|OpFile|array>
      */
     public function values($field_path, string $lang = null, Field &$field = null): Collection
     {
@@ -82,6 +82,9 @@ class Thing
         return $values;
     }
 
+    /**
+     * @return Collection<int,Thing>
+     */
     public function rel($path): ThingCollection
     {
         if (is_string($path)) {
