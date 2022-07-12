@@ -15,6 +15,7 @@ class Field
     private bool $has_been_used = false;
     public ?int $rel_res_id;
     public ?int $rel_field_id;
+    public int $resource_id;
     private Api $api;
     function __construct(Api $api, object $json)
     {
@@ -26,14 +27,17 @@ class Field
         $this->label = $json->label;
         $this->labels = (array) $json->labels;
         $this->type = $json->type;
+        $this->resource_id = $json->resource_id;
         $this->rel_res_id = $json->rel_res_id;
         $this->rel_field_id = $json->rel_field_id;
     }
 
-    function markAsUsed() {
+    function markAsUsed()
+    {
         $this->has_been_used = true;
     }
-    function hasBeenUsed() {
+    function hasBeenUsed()
+    {
         return $this->has_been_used;
     }
 
@@ -50,7 +54,7 @@ class Field
     }
     function resource(): Resource
     {
-        return $this->api->schema->resource($this->json->resource_id);
+        return $this->api->schema->resource($this->resource_id);
     }
 
     function isMedia(): bool
