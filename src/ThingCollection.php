@@ -6,7 +6,7 @@ use Illuminate\Support\Collection;
 
 class ThingCollection extends Collection
 {
-    static function fromResponse(Api $api, array $json_things): self
+    static function fromResponse(AbstractApi $api, array $json_things): self
     {
         $ret = new self();
         foreach ($json_things as $json) {

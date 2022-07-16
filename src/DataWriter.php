@@ -7,12 +7,12 @@ use OnPage\Exceptions\GenericException;
 
 class DataWriter
 {
-    private Api $api;
+    private AbstractApi $api;
     private Resource $resource;
     private array $edits = [];
     private bool $ignore_invalid_urls = false;
 
-    function __construct(Api $api, Resource $resource)
+    function __construct(AbstractApi $api, Resource $resource)
     {
         $this->api = $api;
         $this->resource = $resource;

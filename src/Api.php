@@ -4,16 +4,9 @@ namespace OnPage;
 
 use GuzzleHttp\Client;
 
-class Api
+class Api extends AbstractApi
 {
     private Client $http;
-    private string $api_url;
-    public Schema $schema;
-    private int $req_count = 0;
-    private bool $auto_save = true;
-    private array $pending_writes = [];
-    public $allow_dynamic_relations = false;
-    public string $thumbnail_format = 'png';
 
     function __construct(string $endpoint, string $token, float $timeout = 60000)
     {
@@ -31,24 +24,9 @@ class Api
         $this->loadSchema();
     }
 
-    function loadSchema()
+    function request(string $method, string $endpoint, array $data = [])
     {
-        $this->schema = new Schema($this, $this->get('schema'));
-    }
-
-    function get(string $endpoint, array $params = [])
-    {
-        $params['_method'] = 'get';
-        return $this->post($endpoint, $params);
-    }
-
-    function delete(string $endpoint, array $params = [])
-    {
-        $params['_method'] = 'delete';
-        return $this->post($endpoint, $params);
-    }
-    function post(string $endpoint, array $data = [])
-    {
+        $data['_method'] = $method;
         $req = [];
         if ($this->containsFiles($data)) {
             $req['multipart'] = $this->toFormData($data);
@@ -120,67 +98,5 @@ class Api
             default:
                 throw new Exceptions\ApiError("Status code [{$code}]");
         }
-    }
-
-    function query(string $resource): QueryBuilder
-    {
-        return $this->schema->query($resource);
-    }
-
-    public function getRequestCount(): int
-    {
-        return $this->req_count;
-    }
-
-    function resetRequestCount()
-    {
-        $this->req_count = 0;
-    }
-    function storageLink(string $token, string $name = null): string
-    {
-        $url = "{$this->api_url}/storage/$token";
-        if ($name) {
-            $url .= '?' . http_build_query([
-                'name' => $name,
-            ]);
-        }
-        return $url;
-    }
-
-    /**
-     * Dumps a csv containing information about
-     * the used fields
-     */
-    function dumpUsedFields(string $csv_path)
-    {
-        $file = fopen($csv_path, 'wb');
-
-        fputcsv($file, [
-            'Resource',
-            'Resource name',
-            'Field',
-            'Field name',
-            'Field type',
-        ]);
-
-        foreach ($this->schema->resources() as $res) {
-            $used = false;
-            foreach ($res->fields() as $field) {
-                if (!$field->hasBeenUsed()) continue;
-                $used = true;
-                fputcsv($file, [
-                    $res->label,
-                    $res->name,
-                    $field->label,
-                    $field->name,
-                    $field->type,
-                ]);
-            }
-            if ($used) {
-                fputcsv($file, []);
-            }
-        }
-
-        fclose($file);
     }
 }

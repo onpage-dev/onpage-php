@@ -9,9 +9,9 @@ class Thing
 {
     private object $json;
     public int $id;
-    private Api $api;
+    private AbstractApi $api;
     private array $relations = [];
-    public function __construct(Api $api, object $json)
+    public function __construct(AbstractApi $api, object $json)
     {
         $this->api = $api;
         $this->json = $json;

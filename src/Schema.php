@@ -8,7 +8,7 @@ class Schema
 {
     public $id;
     public $label;
-    private Api $api;
+    private AbstractApi $api;
     private array $id_to_resource;
     private array $id_to_field;
     private array $name_to_resource;
@@ -16,7 +16,7 @@ class Schema
     public array $langs;
     public string $lang;
 
-    public function __construct(Api $api, object $json)
+    public function __construct(AbstractApi $api, object $json)
     {
         $this->api = $api;
         $this->id = $json->id;

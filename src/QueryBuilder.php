@@ -10,11 +10,11 @@ class QueryBuilder
     private array $filters = [];
     private FieldLoader $field_loader;
     private ?array $related_to = null;
-    private Api $api;
+    private AbstractApi $api;
     private ?int $limit = null;
     private ?int $offset = null;
 
-    public function __construct(Api $api, Resource $resource)
+    public function __construct(AbstractApi $api, Resource $resource)
     {
         $this->api = $api;
         $this->resource = $resource;
@@ -129,7 +129,7 @@ class QueryBuilder
             'fields' => $this->field_loader->encode(),
             'return' => $return,
             'options' => [
-                'no_labels' => true,
+                'no_labels' => !$this->api->download_thing_labels,
                 'hyper_compact' => true,
                 'use_field_names' => true,
             ],

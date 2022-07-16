@@ -16,8 +16,8 @@ class Field
     public ?int $rel_res_id;
     public ?int $rel_field_id;
     public int $resource_id;
-    private Api $api;
-    function __construct(Api $api, object $json)
+    private AbstractApi $api;
+    function __construct(AbstractApi $api, object $json)
     {
         $this->api = $api;
         $this->id = $json->id;

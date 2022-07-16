@@ -14,8 +14,8 @@ class Resource
     private array $fields;
     private array $id_to_field;
     private array $name_to_field;
-    private Api $api;
-    public function __construct(Api $api, object $json)
+    private AbstractApi $api;
+    public function __construct(AbstractApi $api, object $json)
     {
         $this->api = $api;
         $this->id = $json->id;
