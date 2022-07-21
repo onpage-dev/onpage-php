@@ -7,14 +7,16 @@ class File
     public string $name;
     public string $token;
     public string $ext;
-    private AbstractApi $api;
+    public int $size;
+    private Api $api;
 
-    function __construct(AbstractApi $api, object $file)
+    function __construct(Api $api, object $file)
     {
         $this->api = $api;
         $this->name = $file->name;
         $this->token = $file->token;
         $this->ext = $file->ext;
+        $this->size = $file->size;
     }
 
     function isImage(): bool
