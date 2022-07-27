@@ -51,6 +51,7 @@ class Thing
         if ($field_path == '_id') return collect([$this->id]);
         if ($field_path == '_resource_id') return collect([$this->json->resource_id]);
         if ($field_path == '_created_at') return collect([$this->json->created_at]);
+        if ($field_path == '_updated_at') return collect([$this->json->updated_at]);
         $path = is_string($field_path) ? $this->resource()->resolveFieldPath($field_path) : collect([$field_path]);
         /** @var Field */
         $field = $path->last();
