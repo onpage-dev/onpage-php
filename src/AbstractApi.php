@@ -14,7 +14,6 @@ abstract class AbstractApi
 
     function loadSchema(): Schema
     {
-        $s = $this->get('schema');
         $this->schema = new Schema($this, $this->get('schema'));
         return $this->schema;
     }

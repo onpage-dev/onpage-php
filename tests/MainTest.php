@@ -19,6 +19,19 @@ class MainTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(1, $this->api->getRequestCount());
         $this->assertTrue(mb_strlen($this->api->schema->label) > 0);
     }
+    public function testSchemaStructure()
+    {
+        $res = $this->api->schema->resource('capitoli');
+        foreach ($res->fields() as $field) {
+            $this->assertIsString($field->getLabel());
+            $this->assertIsString($field->getLabel('zh'));
+            $this->assertIsString($field->name);
+            $this->assertIsString($field->type);
+            $this->assertIsString($field->unit ?? '');
+            $this->assertIsBool($field->is_multiple);
+            $this->assertIsBool($field->is_translatable);
+        }
+    }
     public function testMap()
     {
         $this->assertSame(1, $this->api->getRequestCount());
@@ -164,7 +177,9 @@ class MainTest extends \PHPUnit\Framework\TestCase
     {
         $thing = $this->api->query('capitoli')->first();
         $this->api->resetRequestCount();
+        $this->api->allow_dynamic_relations = true;
         $this->checkArgomenti($thing);
+        $this->api->allow_dynamic_relations = false;
         $this->assertSame(1, $this->api->getRequestCount());
     }
 
@@ -172,7 +187,9 @@ class MainTest extends \PHPUnit\Framework\TestCase
     {
         $thing = $this->api->query('capitoli')->first();
         $this->api->resetRequestCount();
+        $this->api->allow_dynamic_relations = true;
         $arts = $thing->rel('argomenti.prodotti.articoli');
+        $this->api->allow_dynamic_relations = false;
         $this->assertSame(1, $this->api->getRequestCount());
         $this->assertSame(76, $arts->count());
     }
@@ -196,7 +213,7 @@ class MainTest extends \PHPUnit\Framework\TestCase
         $this->assertNotNull($cap);
         $this->assertInstanceOf(\OnPage\Thing::class, $cap, 'Cannot pull first chapter');
         $this->assertSame(236826, $cap->id);
-        $this->assertSame('Profili alluminio', $cap->val('descrizione')[0]);
+        $this->assertSame('Profili alluminio', $cap->val('descrizione'));
     }
 
     public function checkArgomenti(Thing $thing)

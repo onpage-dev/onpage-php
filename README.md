@@ -39,11 +39,13 @@ echo $api->schema->label;
 // Retrieve a resource given its name or ID
 $res = $api->schema->resource('products');
 foreach ($res->fields() as $field) {
-    echo "$field->label\n";
-    echo "$field->name\n";
-    echo "$field->type\n";
-    echo "$field->is_multiple\n";
-    echo "$field->is_translatable\n";
+    echo "$field->getLabel()\n"; // Main image
+    echo "$field->getLabel('zh')\n"; // "Main Image" but in Chinese
+    echo "$field->name\n"; // "main_image"
+    echo "$field->type\n"; // string|file|image|real|int|text|...
+    echo "$field->unit\n"; // null|kg|...
+    echo "$field->is_multiple\n"; // true|false
+    echo "$field->is_translatable\n"; // true|false
 }
 ```
 

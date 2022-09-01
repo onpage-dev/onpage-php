@@ -9,7 +9,9 @@ class Field
     public string $label;
     public string $name;
     public string $type;
+    public ?string $unit;
     public array $labels;
+    public array $descriptions;
     public bool $is_translatable;
     public bool $is_multiple;
     private bool $has_been_used = false;
@@ -25,7 +27,9 @@ class Field
         $this->is_translatable = $json->is_translatable;
         $this->name = $json->name;
         $this->label = $json->label;
+        $this->unit = $json->unit;
         $this->labels = (array) $json->labels;
+        $this->descriptions = (array) $json->descriptions;
         $this->type = $json->type;
         $this->resource_id = $json->resource_id;
         $this->rel_res_id = $json->rel_res_id;
@@ -39,6 +43,22 @@ class Field
     function hasBeenUsed()
     {
         return $this->has_been_used;
+    }
+
+    function getLabel(?string $lang = null) : string
+    {
+        if (isset($this->labels[$lang])) return $this->labels[$lang];
+        $lang = $this->api->schema->lang;
+        if (isset($this->labels[$lang])) return $this->labels[$lang];
+        return $this->name;
+    }
+
+    function getDescription(?string $lang = null) : string
+    {
+        if (isset($this->descriptions[$lang])) return $this->descriptions[$lang];
+        $lang = $this->api->schema->lang;
+        if (isset($this->descriptions[$lang])) return $this->descriptions[$lang];
+        return $this->name;
     }
 
     function identifier(string $lang = null): string

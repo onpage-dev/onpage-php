@@ -30,6 +30,14 @@ class Resource
         }
     }
 
+    function getLabel(?string $lang = null) : string
+    {
+        if (isset($this->labels[$lang])) return $this->labels[$lang];
+        $lang = $this->api->schema->lang;
+        if (isset($this->labels[$lang])) return $this->labels[$lang];
+        return $this->name;
+    }
+    
     public function field($id): ?Field
     {
         $field = null;
