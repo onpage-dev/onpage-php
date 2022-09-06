@@ -6,6 +6,7 @@ class FieldLoader {
     public ?string $relation;
     public ?array $fields = ['+'];
     public ?array $relations = [];
+    public ?array $filters = [];
 
     function __construct(string $relation = null)
     {
@@ -30,8 +31,8 @@ class FieldLoader {
         }
         if ($this->relation) {
             $ret = [
-                $this->relation,
-                $ret,
+                'field' => $this->relation,
+                'fields' => $ret,
             ];
         }
         return $ret;

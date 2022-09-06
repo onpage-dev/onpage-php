@@ -3,6 +3,7 @@
 namespace Test;
 
 use OnPage\File;
+use OnPage\QueryBuilder;
 use OnPage\Thing;
 
 class MainTest extends \PHPUnit\Framework\TestCase
@@ -160,17 +161,32 @@ class MainTest extends \PHPUnit\Framework\TestCase
         $this->checkFirstChapter($caps->first());
         $this->assertSame(21, $caps->count());
     }
-    public function testFilters()
+    public function testFind()
     {
         $thing = $this->api->query('capitoli')
             ->where('_id', 236823)
             ->first();
         $this->assertSame(236823, $thing->id);
-
+    }
+    public function testWhere()
+    {
         $thing = $this->api->query('capitoli')
             ->where('descrizione', 'like', 'led')
             ->first();
         $this->assertSame(236827, $thing->id);
+    }
+    public function testWhereHas()
+    {
+        $res = $this->api->query('capitoli')
+            ->whereHas('argomenti', function (QueryBuilder $q) {
+                $q->where('intestazione', 'like', 'pro');
+            })
+            ->map('descrizione');
+        $this->assertSame([
+            'Profili alluminio' => 236826,
+            'Proiettori LED' => 236829,
+            'Profili LED Speciali' => 236842,
+        ], $res);
     }
 
     public function testOnDemandRelations()

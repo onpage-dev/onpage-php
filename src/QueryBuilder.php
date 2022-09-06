@@ -52,6 +52,14 @@ class QueryBuilder
     }
 
     /**
+     * @return Collection<int,Thing>
+     */
+    public function count(): int
+    {
+        return $this->api->get('things', $this->build('count'));
+    }
+
+    /**
      * Calls the given closure passing one thing at a time
      * the things are loaded one chunk at a time to reduce total memory
      * and reduce latency
@@ -177,6 +185,34 @@ class QueryBuilder
         }
         $filter = [$field, $op, $value];
         $this->filters[] = $filter;
+        return $this;
+    }
+    public function whereHas(string $field, callable $subquery, string $operator = '>', int $value = 0)
+    {
+        $fields = explode('.', $field);
+        $field = array_shift($fields);
+
+        $f = $this->resource->field($field);
+        if ($f?->type != 'relation') {
+            throw new \Error(
+                "Cannot use whereHas on field {$f->name} with type {$f->type}"
+            );
+        }
+
+        $query = new QueryBuilder($this->api, $f->relatedResource());
+        if ($subquery) $subquery($query);
+
+        $clause = [
+            'type' => 'group',
+            'resource_id' => $this->resource->id,
+            'relation' => [
+                'field' => $field,
+                'operator' => $operator,
+                'value' => $value,
+            ],
+            'children' => $query->filters,
+        ];
+        $this->filters[] = $clause;
         return $this;
     }
 
