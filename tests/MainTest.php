@@ -20,6 +20,17 @@ class MainTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(1, $this->api->getRequestCount());
         $this->assertTrue(mb_strlen($this->api->schema->label) > 0);
     }
+    public function testPreloadedFilteredThings()
+    {
+        $query = $this->api->query('argomenti')
+            ->with('prodotti');
+        $this->assertSame(14, $query->first()->rel('prodotti')->count());
+
+        $query->filterRelation('prodotti', function ($q) {
+            $q->where('descrizione', 'like', '7w');
+        });
+        $this->assertSame(3, $query->first()->rel('prodotti')->count());
+    }
     public function testSchemaStructure()
     {
         $res = $this->api->schema->resource('capitoli');

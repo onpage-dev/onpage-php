@@ -114,6 +114,14 @@ class QueryBuilder
         $res = $this->api->delete('things', $req);
         return $res;
     }
+    public function filterRelation(string|array $rel, callable $subquery): static
+    {
+        $loader = $this->field_loader->getRelation($rel);
+        $qb = new QueryBuilder($this->api, $loader->relation->relatedResource());
+        $subquery($qb);
+        $loader->filters[] = $qb->filters;
+        return $this;
+    }
     public function with($relations)
     {
         if (is_string($relations)) {
@@ -123,8 +131,14 @@ class QueryBuilder
             $path = explode('.', $rel);
             $loader = $this->field_loader;
 
+            $prev_field = null;
             foreach ($path as $rel_name) {
-                $loader = $loader->setRelation($rel_name);
+                $field = null;
+                if ($prev_field) $field = $prev_field->relatedResource()->field($rel_name);
+                else $field = $this->resource->field($rel_name);
+                if (!$field) throw new \Error("Cannot find $rel_name to preload");
+                $loader = $loader->setRelation($field);
+                $prev_field = $field;
             }
         }
         return $this;
