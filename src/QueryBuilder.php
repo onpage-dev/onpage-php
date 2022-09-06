@@ -201,6 +201,16 @@ class QueryBuilder
         $this->filters[] = $filter;
         return $this;
     }
+    public function whereEmpty(string $field)
+    {
+        $this->filters[] = [$field, 'empty', ''];
+        return $this;
+    }
+    public function whereNotEmpty(string $field)
+    {
+        $this->filters[] = [$field, 'not_empty', ''];
+        return $this;
+    }
     public function whereHas(string $field, callable $subquery, string $operator = '>', int $value = 0)
     {
         $fields = explode('.', $field);
