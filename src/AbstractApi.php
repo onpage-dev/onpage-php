@@ -52,9 +52,7 @@ abstract class AbstractApi
     {
         $url = "{$this->api_url}/storage/$token";
         if ($name) {
-            $url .= '?' . http_build_query([
-                'name' => $name,
-            ]);
+            $url .= '/' . rawurlencode($name);
         }
         return $url;
     }
