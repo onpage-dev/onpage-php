@@ -41,9 +41,22 @@ class File
             }
             $suffix .= ".{$opts['ext']}";
         }
+
         $name = $opts['name'] ?? true;
         if ($name && !is_string($name)) $name = $this->name;
         else if ($name === false) $name = null;
+
+        if ($name && isset($opts['ext'])) {
+            $name = self::replaceFilenameExtension($name, $opts['ext']);
+        }
+
         return $this->api->storageLink("{$this->token}{$suffix}", $name);
+    }
+
+    static function replaceFilenameExtension(string $filename, ?string $ext)
+    {
+        if (!$ext) return $filename;
+        $filename = pathinfo($filename, PATHINFO_FILENAME);
+        return "$filename.$ext";
     }
 }

@@ -163,7 +163,10 @@ class MainTest extends \PHPUnit\Framework\TestCase
         $arg = $this->api->query('argomenti')->first();
         $img = $arg->val('disegno1');
         $this->assertInstanceOf(File::class, $img);
-        $this->assertSame('https://lithos.onpage.it/api/storage/dd03bec8a725366c6e6327ceb0b91ffd587be553?name=shutterstock_36442114-ok-NEW.jpg', $img->link());
+        $this->assertSame('https://lithos.onpage.it/api/storage/dd03bec8a725366c6e6327ceb0b91ffd587be553/shutterstock_36442114-ok-NEW.jpg', $img->link());
+        $this->assertSame('https://lithos.onpage.it/api/storage/dd03bec8a725366c6e6327ceb0b91ffd587be553.png/shutterstock_36442114-ok-NEW.png', $img->link([
+            'ext' => 'png',
+        ]));
     }
 
     public function testGetAllThings()
