@@ -30,8 +30,13 @@ class FieldLoader {
         return $loader->getRelation($rel_name);
     }
 
-    function loadFields(array $fields) {
-        $this->fields = $fields;
+    function loadFields(array $fields, bool $append = false) {
+        if ($append) {
+            $this->fields = array_merge($this->fields, $fields);
+        } else {
+            $this->fields = $fields;
+        }
+        return $this;
     }
 
     function encode() {

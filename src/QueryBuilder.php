@@ -21,9 +21,9 @@ class QueryBuilder
         $this->field_loader = new FieldLoader();
     }
 
-    function loadFields(array $fields): QueryBuilder
+    function loadFields(array $fields, bool $append = false): QueryBuilder
     {
-        $this->field_loader->loadFields($fields);
+        $this->field_loader->loadFields($fields, $append);
         return $this;
     }
 
