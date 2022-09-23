@@ -203,6 +203,12 @@ class MainTest extends \PHPUnit\Framework\TestCase
         ], $res);
     }
 
+    public function testRelationIds()
+    {
+        $thing = $this->api->query('capitoli')->loadFields(['argomenti'])->first();
+        $this->assertSame([236849], $thing->values('argomenti')->all());
+    }
+
     public function testOnDemandRelations()
     {
         $thing = $this->api->query('capitoli')->first();
@@ -237,7 +243,6 @@ class MainTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(0, $this->api->getRequestCount());
         $this->assertSame(76, $arts->count());
     }
-
     private function checkFirstChapter(Thing $cap)
     {
         $this->assertNotNull($cap);

@@ -65,7 +65,7 @@ class Thing
         }
 
         $codename = $field->identifier($lang);
-        $values = $this->json->fields->{$codename} ?? null;
+        $values = $this->json->fields->{$codename} ?? $this->json->rel_ids->{$codename} ?? null;
         if (is_null($values)) {
             return collect([]);
         }
