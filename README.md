@@ -180,7 +180,7 @@ foreach ($products_with_colors as $prod) {
 ### Creating and updating things
 
 ```php
-$resource = $api->resource('categories');
+$resource = $api->schema->resource('categories');
 $writer = $resource->writer();
 
 $foo = $writer->createThing();
@@ -210,7 +210,7 @@ $editor->save();
 ### Updating many things with one single call
 
 ```php
-$resource = $api->resource('categories');
+$resource = $api->schema->resource('categories');
 $writer = $resource->writer();
 
 $foo = $writer->createThing();
