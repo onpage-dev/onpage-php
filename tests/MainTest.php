@@ -172,7 +172,9 @@ class MainTest extends \PHPUnit\Framework\TestCase
     public function testGetAllThings()
     {
         $caps = $this->api->query('capitoli')->all();
-        $this->checkFirstChapter($caps->first());
+        /** @var Thing */
+        $first = $caps->first();
+        $this->checkFirstChapter($first);
         $this->assertSame(21, $caps->count());
     }
     public function testFind()
