@@ -101,6 +101,12 @@ echo $cat->val('name'); // 再见
 
 // The values function is useful for multivalue fields, it will return a laravel collection of values.
 echo $cat->values('bullet_points')->implode('; ');
+
+// Get related values
+echo $cat->values('products.name'); // [ 'Prod 1', 'Prod 2' ]
+
+// Get first prod name
+echo $cat->val('products.name'); // 'Prod 1'
 ```
 
 #### Files
