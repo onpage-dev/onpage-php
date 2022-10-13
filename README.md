@@ -177,52 +177,93 @@ foreach ($products_with_colors as $prod) {
 }
 ```
 
-### Creating and updating things
+# Creating and updating things
+
+To create or update a record, you need to create a Thing Editor.
+There are two ways to get a Thing Editor:
+
+1. Using the **Resource Writer**
+2. Calling `->editor()` on a `Op\Thing`
+
+## Using the Resource Writer (first method)
+
+This class allows you to edit many records at once.
+You can easily obtain the editor calling:
 
 ```php
-$resource = $api->schema->resource('categories');
-$writer = $resource->writer();
+$writer = $api->resource('categories')->writer();
+```
 
-$foo = $writer->createThing();
-$foo->set('name', 'Mr. Foo');
-$foo->set('description', 'Default language description');
-$foo->set('description', 'Custom language description', 'fr'); // you can specify language
+Now that you have a **Resource Writer**, you can use it to create things:
 
-$pat = $writer->updateThing(12345); // specify the thing id
-$pat->set('name', 'Mr. Pat');
+```php
+$editor = $writer->createThing();
+$editor->set('name', 'Element 1');
+$editor->setRel('category', [ 12345 ]); // array with category IDs
+```
 
-// Save all the edits at once using the save method
+...and to update existing things:
+
+```php
+$editor = $writer->updateThing(736251); // The id of the element you want to update
+$editor->set('description', 'Element 1 description');
+```
+
+Finally, you need to send the request to the On Page server:
+
+```php
+// this will create and update all the things as requested above
 $writer->save();
 ```
 
-### Updating a record
+## Updating a single item (second method)
 
 ```php
-$cat = $api->query('categories' ->first();
+$product = $api->query('products')->where('name', 'Plastic Duck')->first();
 
-$editor = $cat->editor();
-$editor->set('name', 'Mr. Foo');
-$editor->set('description', 'Default language description');
-$editor->set('description', 'Custom language description', 'fr'); // you can specify language
+$editor = $product->editor();
+$editor->set('description', 'This yellow plastic duck will be your best friend');
+$editor->set('description', '这只黄色塑料鸭将是你最好的朋友', 'zh'); // you can specify language
+
+// Save all the edits at once using the save method
 $editor->save();
+
 ```
 
-### Updating many things with one single call
+## Updating translations
+
+Just add the language code as the third argument to the `set` function:
 
 ```php
-$resource = $api->schema->resource('categories');
-$writer = $resource->writer();
+// Update the value in the default language
+$editor->set('description', 'This yellow plastic duck will be your best friend');
 
-$foo = $writer->createThing();
-$foo->set('name', 'Mr. Foo');
-$foo->set('description', 'Default language description');
-$foo->set('description', 'Custom language description', 'fr'); // you can specify language
+// Specify another the language
+$editor->set('description', '这只黄色塑料鸭将是你最好的朋友', 'zh');
+```
 
-$pat = $writer->createThing();
-$pat->set('name', 'Mr. Pat');
-$foo->set('image', new \OnPage\FileUpload('/path/to/bird.jpg')); // upload file
-$foo->set('cover', 'https://mysite.com/bird_cover.jpg'); // specify file by url
+## Updating files
 
-// Save all the edits at once using the save method
-$writer->save();
+You can upload files to On Page using the FileUpload class:
+
+```php
+$editor->set('image', new \OnPage\FileUpload('/path/to/bird.jpg')); // upload file
+```
+
+Or you can also upload a file using a public URL:
+
+```php
+$editor->set('image', 'https://mysite.com/bird_cover.jpg'); // specify file by url
+```
+
+## Updating multivalue fields
+
+For multivalue fields you only need to replace `->set` with `->setValues` and pass an array of values as the second argument:
+
+```php
+$editor->setValues('bullet_points', [
+    'Durable plastic',
+    'Bright yellow color',
+    'Compostable'
+]);
 ```
