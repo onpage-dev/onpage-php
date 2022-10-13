@@ -267,3 +267,15 @@ $editor->setValues('bullet_points', [
     'Compostable'
 ]);
 ```
+
+## Updating relations
+
+To update relations, you can use the `->setRel(relation_name, related_ids)`:
+
+```php
+$editor->setRel('features', [
+    425790,
+    547023,
+    240289,
+]);
+```
