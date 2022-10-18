@@ -52,17 +52,22 @@ class Thing
         if ($field_path == '_resource_id') return collect([$this->json->resource_id]);
         if ($field_path == '_created_at') return collect([$this->json->created_at]);
         if ($field_path == '_updated_at') return collect([$this->json->updated_at]);
-        $path = is_string($field_path) ? $this->resource()->resolveFieldPath($field_path) : collect([$field_path]);
+
+        if (is_string($field_path)) {
+            $field_path = explode('.', $field_path);
+        }
+        if (!is_array($field_path)) {
+            $field_path = [$field_path];
+        }
+
+        if (count($field_path) > 1) {
+            $related = $this->rel(array_slice($field_path, 0, -1));
+            return $related->flatMap(fn (Thing $rel) => $rel->values(collect($field_path)->last(), $lang, $field));
+        }
+
+        $path = $this->resource()->resolveFieldPath($field_path);
         /** @var Field */
         $field = $path->last();
-
-        if ($path->count() > 1) {
-            /** @var Thing */
-            $related = $this->rel($path->first()->name)->first();
-            if (!$related) return collect([]);
-            $child_path = $path->skip(1)->pluck('name')->implode('.');
-            return $related->values($child_path, $lang, $field);
-        }
 
         $codename = $field->identifier($lang);
         $values = $this->json->fields->{$codename} ?? $this->json->rel_ids->{$codename} ?? null;

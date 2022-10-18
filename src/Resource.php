@@ -69,11 +69,15 @@ class Resource
     }
 
     /**
+     * @param array|string $field_path
      * @return Collection<Field>
      */
-    function resolveFieldPath(string $field_path): Collection
+    function resolveFieldPath($field_path): Collection
     {
-        $field_path = explode('.', $field_path);
+        if (is_string($field_path)) {
+            $field_path = explode('.', $field_path);
+        }
+        
         $current_res = $this;
 
         /** @var Field[] */

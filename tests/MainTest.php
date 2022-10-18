@@ -105,6 +105,21 @@ class MainTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($cap->id, $cap_by_id->id);
     }
 
+    public function testRelatedValues()
+    {
+        $thing = $this->api->query('capitoli')->with('argomenti')->find(236823);
+        $this->assertSame(236823, $thing->id);
+        $this->assertSame(236823, $thing->val('_id'));
+        $this->assertSame([
+            'Plafoniere LED',
+            'Plafoniere'
+        ], $thing->values('argomenti.intestazione')->all());
+        $this->assertSame([
+            236854,
+            236855
+        ], $thing->values('argomenti._id')->all());
+    }
+
     public function testWriteFirstThing()
     {
         // Get the resource
