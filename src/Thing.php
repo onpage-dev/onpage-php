@@ -48,6 +48,9 @@ class Thing
      */
     public function values($field_path, string $lang = null, Field &$field = null): Collection
     {
+        if ($field_path instanceof Field) {
+            $field_path = $field_path->name;
+        }
         if ($field_path == '_id') return collect([$this->id]);
         if ($field_path == '_resource_id') return collect([$this->json->resource_id]);
         if ($field_path == '_created_at') return collect([$this->json->created_at]);
