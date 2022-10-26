@@ -115,4 +115,16 @@ class ThingEditor
         }
         return $this;
     }
+
+    function ignoreInvalidUrls(bool $ignore = true): Self
+    {
+        $this->updater->ignoreInvalidUrls($ignore);
+        return $this;
+    }
+
+    function queuePdfGenerators(bool $queue = true): Self
+    {
+        $this->updater->queuePdfGenerators($queue);
+        return $this;
+    }
 }

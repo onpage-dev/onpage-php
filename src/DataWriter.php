@@ -53,12 +53,12 @@ class DataWriter
         return $ret;
     }
 
-    function ignoreInvalidUrls(bool $ignore = true): DataWriter
+    function ignoreInvalidUrls(bool $ignore = true): Self
     {
         $this->ignore_invalid_urls = $ignore;
         return $this;
     }
-    function queuePdfGenerators(bool $queue = true): DataWriter
+    function queuePdfGenerators(bool $queue = true): Self
     {
         $this->queue_pdf_generators = $queue;
         return $this;
