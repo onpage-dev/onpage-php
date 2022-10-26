@@ -11,6 +11,7 @@ class DataWriter
     private Resource $resource;
     private array $edits = [];
     private bool $ignore_invalid_urls = false;
+    private bool $queue_pdf_generators = false;
 
     function __construct(AbstractApi $api, Resource $resource)
     {
@@ -57,6 +58,11 @@ class DataWriter
         $this->ignore_invalid_urls = $ignore;
         return $this;
     }
+    function queuePdfGenerators(bool $queue = true): DataWriter
+    {
+        $this->queue_pdf_generators = $queue;
+        return $this;
+    }
 
     /** @return int[] */
     function save(): array
@@ -71,6 +77,7 @@ class DataWriter
                 'things' => [],
                 'options' => [
                     'ignore_invalid_urls' => $this->ignore_invalid_urls,
+                    'queue_pdf_generators' => $this->queue_pdf_generators,
                 ],
             ];
             foreach ($chunk as $edit) {
