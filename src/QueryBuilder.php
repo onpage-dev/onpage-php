@@ -103,6 +103,15 @@ class QueryBuilder
             ];
         })->all();
     }
+
+    /** @return Collection<mixed> */
+    public function pluck($field): Collection
+    {
+        $data = $this->build('pluck');
+        $data['field'] = $field;
+        return collect($this->api->get('things', $data));
+    }
+    
     public function first(): ?Thing
     {
         $res = $this->api->get('things', $this->build('first'));
