@@ -123,6 +123,7 @@ class QueryBuilder
         $res = $this->api->delete('things', $req);
         return $res;
     }
+    /** @param string|array $rel */
     public function filterRelation(string|array $rel, callable $subquery): static
     {
         $loader = $this->field_loader->getRelation($rel);
