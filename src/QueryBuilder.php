@@ -227,7 +227,10 @@ class QueryBuilder
         $field = array_shift($fields);
 
         $f = $this->resource->field($field);
-        if ($f?->type != 'relation') {
+        if (!$f) throw new \Error(
+            "Cannot find relation $field"
+        );
+        if ($f->type != 'relation') {
             throw new \Error(
                 "Cannot use whereHas on field {$f->name} with type {$f->type}"
             );
