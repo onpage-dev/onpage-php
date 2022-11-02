@@ -124,7 +124,7 @@ class QueryBuilder
         return $res;
     }
     /** @param string|array $rel */
-    public function filterRelation(string|array $rel, callable $subquery): static
+    public function filterRelation($rel, callable $subquery): static
     {
         $loader = $this->field_loader->getRelation($rel);
         $qb = new QueryBuilder($this->api, $loader->relation->relatedResource());
