@@ -44,6 +44,28 @@ class MainTest extends \PHPUnit\Framework\TestCase
             $this->assertIsBool($field->is_translatable);
         }
     }
+
+    function testCountActivePrezzo()
+    {
+        $count = $this->api->query('prezzi')->count();
+        $this->assertSame(1252, $count);
+    }
+    function testCountAllPrezzo()
+    {
+        $count = $this->api->query('prezzi')->withStatus('any')->count();
+        $this->assertSame(1253, $count);
+    }
+    function testCountDeletedPrezzo()
+    {
+        $count = $this->api->query('prezzi')->withStatus('deleted')->count();
+        $this->assertSame(1, $count);
+    }
+    function testGetDeletedItemShouldHaveData()
+    {
+        $prezzo = $this->api->query('prezzi')->withStatus('deleted')->first();
+        $this->assertSame(238508, $prezzo?->id);
+        $this->assertSame(18.8, $prezzo?->val('prezzo1'));
+    }
     public function testMap()
     {
         $this->assertSame(1, $this->api->getRequestCount());

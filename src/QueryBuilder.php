@@ -260,20 +260,22 @@ class QueryBuilder
         return $this->where("_id", $id)->first();
     }
 
+    public function withStatus(string $status)
+    {
+        $this->trash_status = $status;
+        return $this;
+    }
     public function isActiveStatus()
     {
-        $this->trash_status = 'active';
-        return $this;
+        return $this->withStatus('active');
     }
     public function isDeletedStatus()
     {
-        $this->trash_status = 'deleted';
-        return $this;
+        return $this->withStatus('deleted');
     }
     public function isAnyStatus()
     {
-        $this->trash_status = 'any';
-        return $this;
+        return $this->withStatus('any');
     }
 
     function whereOneOf(callable $fn)
