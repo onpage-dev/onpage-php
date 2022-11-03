@@ -13,6 +13,7 @@ class QueryBuilder
     private AbstractApi $api;
     private ?int $limit = null;
     private ?int $offset = null;
+    private string $trash_status = 'active'; // active|deleted|any;
 
     public function __construct(AbstractApi $api, Resource $resource)
     {
@@ -111,7 +112,7 @@ class QueryBuilder
         $data['field'] = $field;
         return collect($this->api->get('things', $data));
     }
-    
+
     public function first(): ?Thing
     {
         $res = $this->api->get('things', $this->build('first'));
@@ -164,6 +165,7 @@ class QueryBuilder
                 'no_labels' => !$this->api->download_thing_labels,
                 'hyper_compact' => true,
                 'use_field_names' => true,
+                'status' => $this->trash_status,
             ],
         ];
 
@@ -256,6 +258,22 @@ class QueryBuilder
     public function find(int $id): ?Thing
     {
         return $this->where("_id", $id)->first();
+    }
+
+    public function isActiveStatus()
+    {
+        $this->trash_status = 'active';
+        return $this;
+    }
+    public function isDeletedStatus()
+    {
+        $this->trash_status = 'deleted';
+        return $this;
+    }
+    public function isAnyStatus()
+    {
+        $this->trash_status = 'any';
+        return $this;
     }
 
     function whereOneOf(callable $fn)
