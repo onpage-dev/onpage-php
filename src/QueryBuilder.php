@@ -133,6 +133,15 @@ class QueryBuilder
         $loader->filters[] = $qb->filters;
         return $this;
     }
+
+    /** @param string|array $rel */
+    public function loadRelationFields($rel, array $fields, $append = false)
+    {
+        $loader = $this->field_loader->getRelation($rel);
+        $loader->loadFields($fields, $append);
+        return $this;
+    }
+
     public function with($relations)
     {
         if (is_string($relations)) {
