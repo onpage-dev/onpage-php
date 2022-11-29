@@ -4,7 +4,6 @@ namespace OnPage;
 
 use Illuminate\Support\Collection;
 use OnPage\Exceptions\FieldNotFound;
-use OnPage\Exceptions\GenericException;
 
 class ThingEditor
 {
@@ -55,14 +54,7 @@ class ThingEditor
         if ($field->is_translatable && !$lang) {
             $lang = $this->langs[0] ?? $this->updater->schema()->lang;
         }
-        foreach ($values as $i => $v) {
-            if ($v instanceof File) {
-                $values[$i] = [
-                    'token' => $v->token,
-                    'name' => $v->name,
-                ];
-            }
-        }
+        if (!$field->is_translatable) $lang = null;
         if ($append) {
             $values = array_merge($this->fields[$field_name][$lang] ?? [], $values);
         }

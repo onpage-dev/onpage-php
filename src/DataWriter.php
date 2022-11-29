@@ -85,11 +85,11 @@ class DataWriter
             }
             try {
                 $res = $this->api->post('things/bulk', $req);
+                $ret = array_merge($ret, $res);
             } catch (\GuzzleHttp\Exception\ClientException $e) {
                 $res = json_decode($e->getResponse()->getBody());
                 throw new GenericException($res->message);
             }
-            $ret = array_merge($ret, $res);
         }
         $this->edits = [];
         return $ret;
