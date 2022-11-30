@@ -17,7 +17,7 @@
     },
     "require": {
         "php": "^7.4 || ^8.0",
-        "guzzlehttp/guzzle": "^7.0",
+        "guzzlehttp/guzzle": "^7.0 || ^6.0",
         "illuminate/collections": "^8 || ^9"
     },
     "minimum-stability": "stable"
