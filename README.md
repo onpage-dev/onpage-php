@@ -85,7 +85,7 @@ Use the values() function to get all values in a field as a collection.
 
 ```php
 $cat = $api->query('categories')->first();
-echo $cat->id; // This returns the OP id of the resource, you can also get it by calling $cat->val("_id") minding the underscore
+echo $cat->id; // This returns the OP id of the record, you can also get it by calling $cat->val("_id") minding the underscore
 echo $cat->val('name');
 echo $cat->val('dimension');
 echo $cat->val('description', 'zh'); // you can specify a language
