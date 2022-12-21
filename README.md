@@ -85,7 +85,10 @@ Use the values() function to get all values in a field as a collection.
 
 ```php
 $cat = $api->query('categories')->first();
-echo $cat->id; // This returns the OP id of the record, you can also get it by calling $cat->val("_id") minding the underscore
+echo $cat->id; // item ID
+echo $cat->created_at; // creation date e.g. 2022-01-01 23:33:00
+echo $cat->updated_at; // date of last update to any of the fields e.g. 2022-01-01 23:33:00
+echo $cat->order; // global order number (float)
 echo $cat->val('name');
 echo $cat->val('dimension');
 echo $cat->val('description', 'zh'); // you can specify a language
