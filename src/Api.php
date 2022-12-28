@@ -20,6 +20,7 @@ class Api extends AbstractApi
         $this->http = new Client([
             'timeout' => $timeout,
             'base_uri' => "{$this->api_url}/view/{$token}/",
+            'headers' => ['Accept-Encoding' => 'gzip'],
         ]);
         $this->loadSchema();
     }
