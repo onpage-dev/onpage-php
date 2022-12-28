@@ -8,7 +8,7 @@ abstract class AbstractApi
     protected int $req_count = 0;
     public $allow_dynamic_relations = false;
     public string $thumbnail_format = 'png';
-    public bool $download_thing_labels = true;
+    public bool $download_thing_labels = false;
     protected string $api_url = 'https://app.onpage.it/api/';
 
 
