@@ -4,15 +4,9 @@ With this library you can easy query your data using an On Page ® API token.
 
 ## Installation
 
+To install this library in your existing composer project, or update to the latest version, you can launch:
 ```
-composer config repositories.onpage vcs 'https://github.com/onpage-dev/onpage-php.git'
-composer require onpage-dev/onpage-php:^v1.1
-```
-
-To update to the latest version, you can launch
-
-```
-composer require onpage-dev/onpage-php:^v1.1
+composer require onpage-php:^v1.1
 ```
 
 Of course, remember to include the composer autoload:
@@ -91,6 +85,10 @@ Use the values() function to get all values in a field as a collection.
 
 ```php
 $cat = $api->query('categories')->first();
+echo $cat->id; // item ID
+echo $cat->created_at; // creation date e.g. 2022-01-01 23:33:00
+echo $cat->updated_at; // date of last update to any of the fields e.g. 2022-01-01 23:33:00
+echo $cat->order; // global order number (float)
 echo $cat->val('name');
 echo $cat->val('dimension');
 echo $cat->val('description', 'zh'); // you can specify a language
