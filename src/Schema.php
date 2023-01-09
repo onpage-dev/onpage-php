@@ -14,6 +14,7 @@ class Schema
     private array $name_to_resource;
     private array $resources;
     public array $langs;
+    private ?string $fallback_lang = null;
     public string $lang;
 
     public function __construct(AbstractApi $api, object $json)
@@ -58,5 +59,13 @@ class Schema
     function query(string $resource): QueryBuilder
     {
         return $this->resource($resource)->query();
+    }
+
+    function setFallbackLang(?string $lang) {
+        $this->fallback_lang = $lang;
+    }
+
+    function getFallbackLang() {
+        return $this->fallback_lang;
     }
 }

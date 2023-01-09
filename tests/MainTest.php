@@ -294,6 +294,17 @@ class MainTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf(\OnPage\Thing::class, $cap, 'Cannot pull first chapter');
         $this->assertSame(236826, $cap->id);
         $this->assertSame('Profili alluminio', $cap->val('descrizione'));
+        $this->assertSame('Perfiles de aluminio', $cap->val('descrizione', 'es'));
+        
+        // Test fallback lang
+        $this->api->schema->lang = 'zh';
+        $this->api->schema->setFallbackLang(null);
+        $this->assertSame(null, $cap->val('descrizione'));
+        $this->api->schema->setFallbackLang('gb');
+        $this->assertSame('Aluminium profiles', $cap->val('descrizione'));
+        $this->api->schema->setFallbackLang(null);
+        $this->assertSame(null, $cap->val('descrizione'));
+        $this->api->schema->lang = 'it';
     }
 
     public function checkArgomenti(Thing $thing)

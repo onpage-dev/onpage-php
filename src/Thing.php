@@ -38,7 +38,7 @@ class Thing
      */
     public function val($field_path, string $lang = null) //: null | string | bool | int | array | File
     {
-        return $this->values($field_path, $lang, $field)->first();
+        return $this->values($field_path, $lang)->first();
     }
 
     /**
@@ -48,6 +48,15 @@ class Thing
      */
     public function values($field_path, string $lang = null, Field &$field = null): Collection
     {
+        // Try to return values in default language or using the fallback language if set
+        if (is_null($lang)) {
+            $ret = $this->values($field_path, $this->api->schema->lang, $field);
+            if ($ret->isEmpty() && $this->api->schema->getFallbackLang()) {
+                $ret = $this->values($field_path, $this->api->schema->getFallbackLang(), $field);
+            }
+            return $ret;
+        }
+
         if ($field_path instanceof Field) {
             $field_path = $field_path->name;
         }
