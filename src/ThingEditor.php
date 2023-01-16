@@ -10,23 +10,28 @@ class ThingEditor
     private ?int $id;
     public array $fields = [];
     private array $relations = [];
-    private DataWriter $updater;
+    private DataWriter $writer;
     private ?array $langs = null;
 
     /**
      * @param string[]|string|null $langs
      */
-    function __construct(DataWriter $updater, int $id = null, $langs = null)
+    function __construct(DataWriter $writer, int $id = null, $langs = null)
     {
         $this->id = $id;
-        $this->updater = $updater;
+        $this->writer = $writer;
         if (is_string($langs)) $langs = [$langs];
+        $this->langs = $langs;
+    }
+
+    function setLangs(array $langs = null)
+    {
         $this->langs = $langs;
     }
 
     private function resource(): Resource
     {
-        return $this->updater->resource();
+        return $this->writer->resource();
     }
 
     function hasData(): bool
@@ -52,7 +57,7 @@ class ThingEditor
         if (!$field) throw FieldNotFound::from($field_name);
 
         if ($field->is_translatable && !$lang) {
-            $lang = $this->langs[0] ?? $this->updater->schema()->lang;
+            $lang = $this->langs[0] ?? $this->writer->schema()->lang;
         }
         if (!$field->is_translatable) $lang = null;
         if ($append) {
@@ -92,14 +97,14 @@ class ThingEditor
     }
     function save()
     {
-        return $this->updater->save();
+        return $this->writer->save();
     }
     function copyFromThing(Thing $th, array $limit_langs = null): Self
     {
-        foreach ($this->updater->resource()->fields()->whereNotIn('type', ['relation']) as $f) {
+        foreach ($this->writer->resource()->fields()->whereNotIn('type', ['relation']) as $f) {
             $remote_field = $th->resource()->field($f->name);
             if (!$remote_field) continue;
-            $langs = $f->is_translatable ? $limit_langs ?? $this->langs ?? $this->updater->schema()->langs : [null];
+            $langs = $f->is_translatable ? $limit_langs ?? $this->langs ?? $this->writer->schema()->langs : [null];
 
             foreach ($langs as $l) {
                 $this->setValues($f->name, $th->values($f->name, $l), $l);
@@ -110,13 +115,13 @@ class ThingEditor
 
     function ignoreInvalidUrls(bool $ignore = true): Self
     {
-        $this->updater->ignoreInvalidUrls($ignore);
+        $this->writer->ignoreInvalidUrls($ignore);
         return $this;
     }
 
     function queuePdfGenerators(bool $queue = true): Self
     {
-        $this->updater->queuePdfGenerators($queue);
+        $this->writer->queuePdfGenerators($queue);
         return $this;
     }
 }
