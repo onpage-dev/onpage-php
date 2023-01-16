@@ -228,6 +228,16 @@ $editor->save();
 
 ```
 
+## Limiting modified languages
+By default, even if you update a single language, the writer will delete the data on other languages. If you only need to edit certain languages and maintain the current values for the others, you can specify which languages you are working on as follows:
+```php
+// Update the chinese description without deleting the english description:
+$editor = $product->editor();
+$editor->setLangs([ 'zh' ]);
+$editor->set('description', '这只');
+$editor->save();
+```
+
 ## Updating translations
 
 Just add the language code as the third argument to the `set` function:
