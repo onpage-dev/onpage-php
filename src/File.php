@@ -32,6 +32,8 @@ class File
 
             if (isset($opts['contain'])) {
                 $suffix .= '-contain';
+            } elseif (isset($opts['mode'])) {
+                $suffix .= '-' . $opts['mode'];
             }
         }
 
