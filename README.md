@@ -161,7 +161,7 @@ $api->query('products')->loadFields(['title'])->all();
 // You can also limit the fields on a related item
 $api->query('products')
 ->with([ 'colors' ])
-->loadRelationFields(['name', 'image']) // only load 2 fields for the "color" relation
+->loadRelationFields('colors', ['name', 'image']) // only load 2 fields for the "color" relation
 ->all();
 
 
