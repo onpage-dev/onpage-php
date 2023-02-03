@@ -210,6 +210,7 @@ class MainTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('https://lithos.onpage.it/api/storage/dd03bec8a725366c6e6327ceb0b91ffd587be553.png/shutterstock_36442114-ok-NEW.png', $img->link([
             'ext' => 'png',
         ]));
+        $this->assertSame('https://lithos.onpage.it/api/storage/dd03bec8a725366c6e6327ceb0b91ffd587be553.300x300-fit.jpg/shutterstock_36442114-ok-NEW.jpg', $img->thumbnail(width: 300, height: 300, mode: 'fit', ext: 'jpg'));
     }
 
     public function testGetAllThings()
