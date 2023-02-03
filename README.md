@@ -72,6 +72,26 @@ $api->query('products')
     ->all(); // returns a collection with all your records
 
 
+// Advanced filtering by relation
+$api->query('products')
+    
+    // only retrieve products that have at least one associated category
+    ->whereHas('category')
+    
+    // only retrieve products that have zero associated categories
+    ->whereHas('category', null, '=', 0)
+    
+    // only retrieve products that have at least one variant with at least one color
+    ->whereHas('variant.color')
+    
+    // Only get products that have at least one category that satisfies these 2 conditions:
+    ->whereHas('category', function(\OnPage\QueryBuilder $q) {
+      $q->where('is_online', true);
+      $q->where('name', 'like', 'shoes');
+    })
+    
+    ->all();
+
 // You can just smply delete data the same way:
 $api->query('products')
     ->where(...)
@@ -138,6 +158,13 @@ $product->val('cover_image')->link(['x' => 200, 'format' => 'png'])
 // Speed things up by only loading some fields
 $api->query('products')->loadFields(['title'])->all();
 
+// You can also limit the fields on a related item
+$api->query('products')
+->with([ 'colors' ])
+->loadRelationFields(['name', 'image']) // only load 2 fields for the "color" relation
+->all();
+
+
 // Get a mapping between two fields or a field and the thing ID
 $api->query('products')->map('code');
 // [ 'MYSKU100' => 1827, 'MYSKU101' => 1828, ... ]
@@ -163,9 +190,9 @@ $cat = $api->query('categories')
     ->with('subcategories.articles.colors')
     ->first();
 
-// Of course you can use it with the ->all() method
+// Or you can pass the relations as an array
 $products_with_colors = $api->query('products')
-    ->with('colors')
+    ->with([ 'colors', 'categories' ])
     ->all();
 foreach ($products_with_colors as $prod) {
     echo $prod->val('name');
@@ -173,6 +200,15 @@ foreach ($products_with_colors as $prod) {
         echo $color->val('name');
     }
 }
+
+// If you need to filter the related items you want to download, you can do this:
+$cat = $api->query('categories')
+    ->with('subcategories.articles.colors')
+    ->filterRelation('subcategories.articles', function(\OnPage\QueryBuilder $q) {
+        $q->where('is_online', true);
+    })
+    ->first();
+ 
 ```
 
 # Creating and updating things
