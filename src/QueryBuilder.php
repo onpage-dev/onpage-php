@@ -232,7 +232,7 @@ class QueryBuilder
         $this->filters[] = [$field, 'not_empty', ''];
         return $this;
     }
-    public function whereHas(string $field, callable $subquery, string $operator = '>', int $value = 0)
+    public function whereHas(string $field, callable $subquery = null, string $operator = '>', int $value = 0)
     {
         $fields = explode('.', $field);
         $field = array_shift($fields);
