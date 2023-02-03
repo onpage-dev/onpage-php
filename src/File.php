@@ -24,6 +24,15 @@ class File
         return in_array(strtolower($this->ext), ['png', 'gif', 'jpg', 'webp', 'eps', 'dwg', 'svg', 'tiff']);
     }
 
+    function thumbnail(int $width = null, int $height = null, ?string $mode = 'contain', ?string $ext = null) {
+        return $this->link([
+            'x' => $width,
+            'y' => $height,
+            'mode' => $mode,
+            'ext' => $ext,
+        ]);
+    }
+
     function link(array $opts = []): string
     {
         $suffix = '';
