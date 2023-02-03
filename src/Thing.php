@@ -3,9 +3,10 @@
 namespace OnPage;
 
 use Illuminate\Support\Collection;
+use JsonSerializable;
 use OnPage\Exceptions\FieldNotFound;
 
-class Thing
+class Thing implements JsonSerializable
 {
     private object $json;
     public int $id;
@@ -190,5 +191,10 @@ class Thing
     {
         if (!$updater) $updater = $this->resource()->writer();
         return $updater->forThing($this->id);
+    }
+
+    function jsonSerialize(): mixed
+    {
+        return $this->json;
     }
 }
