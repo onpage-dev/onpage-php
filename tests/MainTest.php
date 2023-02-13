@@ -43,6 +43,12 @@ class MainTest extends \PHPUnit\Framework\TestCase
             $this->assertIsBool($field->is_multiple);
             $this->assertIsBool($field->is_translatable);
         }
+        $folder = $res->folder('prova');
+        
+        $this->assertSame('Prova', $folder->getLabel());
+        $this->assertSame('Test', $folder->getLabel('gb'));
+        $this->assertSame(2, $folder->getFormFields()->count());
+        $this->assertSame('descrizione,idprogramma', $folder->getFormFields()->pluck('name')->implode(','));
     }
 
     function testCountActivePrezzo()
@@ -296,7 +302,7 @@ class MainTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(236826, $cap->id);
         $this->assertSame('Profili alluminio', $cap->val('descrizione'));
         $this->assertSame('Perfiles de aluminio', $cap->val('descrizione', 'es'));
-        
+
         // Test fallback lang
         $this->api->schema->lang = 'zh';
         $this->api->schema->setFallbackLang(null);

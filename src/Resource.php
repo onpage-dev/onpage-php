@@ -11,9 +11,15 @@ class Resource
     public string $label;
     public string $name;
     public array $labels;
+
     private array $fields;
     private array $id_to_field;
     private array $name_to_field;
+
+    private array $folders;
+    private array $id_to_folder;
+    private array $name_to_folder;
+
     private AbstractApi $api;
     public function __construct(AbstractApi $api, object $json)
     {
@@ -22,22 +28,43 @@ class Resource
         $this->name = $json->name;
         $this->label = $json->label;
         $this->labels = (array) $json->labels;
-        foreach ($json->fields as $field_json) {
+        $this->setFields($json->fields);
+        $this->setFolders($json->folders ?? []);
+    }
+
+    private function setFields(array $fields)
+    {
+        $this->fields = [];
+        $this->id_to_field = [];
+        $this->name_to_field = [];
+        foreach ($fields as $field_json) {
             $field = new Field($this->api, $field_json);
             $this->fields[] = $field;
             $this->id_to_field[$field_json->id] = $field;
             $this->name_to_field[$field_json->name] = $field;
         }
     }
+    private function setFolders(array $folders)
+    {
+        $this->folders = [];
+        $this->id_to_folder = [];
+        $this->name_to_folder = [];
+        foreach ($folders ?? [] as $folder_json) {
+            $folder = new FieldFolder($this->api, $folder_json);
+            $this->folders[] = $folder;
+            $this->id_to_folder[$folder_json->id] = $folder;
+            $this->name_to_folder[$folder_json->name] = $folder;
+        }
+    }
 
-    function getLabel(?string $lang = null) : string
+    function getLabel(?string $lang = null): string
     {
         if (isset($this->labels[$lang])) return $this->labels[$lang];
         $lang = $this->api->schema->lang;
         if (isset($this->labels[$lang])) return $this->labels[$lang];
         return $this->name;
     }
-    
+
     public function field($id): ?Field
     {
         $field = null;
@@ -56,6 +83,25 @@ class Resource
     public function fields(): Collection
     {
         return collect($this->fields);
+    }
+
+    public function folder($id): ?FieldFolder
+    {
+        $folder = null;
+        if (is_numeric($id)) {
+            $folder = $this->id_to_folder[$id] ?? null;
+        } else {
+            $folder = $this->name_to_folder[$id] ?? null;
+        }
+        return $folder;
+    }
+
+    /**
+     * @return Collection<FieldFolder>
+     */
+    public function folders(): Collection
+    {
+        return collect($this->folders);
     }
 
     function writer(): DataWriter
@@ -77,7 +123,7 @@ class Resource
         if (is_string($field_path)) {
             $field_path = explode('.', $field_path);
         }
-        
+
         $current_res = $this;
 
         /** @var Field[] */
