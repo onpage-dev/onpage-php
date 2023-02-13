@@ -2,6 +2,7 @@
 
 namespace OnPage;
 
+use Illuminate\Support\Collection;
 
 class Field
 {
@@ -45,7 +46,7 @@ class Field
         return $this->has_been_used;
     }
 
-    function getLabel(?string $lang = null) : string
+    function getLabel(?string $lang = null): string
     {
         if (isset($this->labels[$lang])) return $this->labels[$lang];
         $lang = $this->api->schema->lang;
@@ -53,7 +54,7 @@ class Field
         return $this->name;
     }
 
-    function getDescription(?string $lang = null) : string
+    function getDescription(?string $lang = null): string
     {
         if (isset($this->descriptions[$lang])) return $this->descriptions[$lang];
         $lang = $this->api->schema->lang;
@@ -93,5 +94,11 @@ class Field
     {
         $rel_res = $this->relatedResource();
         return $rel_res->field($this->rel_field_id);
+    }
+
+    /** @var Collection<FieldFolder> */
+    function getFolders(): Collection
+    {
+        return $this->resource()->folders()->filter(fn (FieldFolder $f) => in_array($this->id, $f->form_fields))->values();
     }
 }

@@ -44,11 +44,12 @@ class MainTest extends \PHPUnit\Framework\TestCase
             $this->assertIsBool($field->is_translatable);
         }
         $folder = $res->folder('prova');
-        
+
         $this->assertSame('Prova', $folder->getLabel());
         $this->assertSame('Test', $folder->getLabel('gb'));
         $this->assertSame(2, $folder->getFormFields()->count());
         $this->assertSame('descrizione,idprogramma', $folder->getFormFields()->pluck('name')->implode(','));
+        $this->assertSame('prova', $res->field('idprogramma')->getFolders()->pluck('name')->implode(','));
     }
 
     function testCountActivePrezzo()
