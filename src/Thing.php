@@ -75,7 +75,7 @@ class Thing implements JsonSerializable
 
         if (count($field_path) > 1) {
             $related = $this->rel(array_slice($field_path, 0, -1));
-            return $related->flatMap(fn (Thing $rel) => $rel->values(collect($field_path)->last(), $lang, $field));
+            return $related->flatMap(fn (Thing $rel) => $rel->values(collect($field_path)->last(), $lang, $field))->unique();
         }
 
         $path = $this->resource()->resolveFieldPath($field_path);
