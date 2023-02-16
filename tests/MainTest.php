@@ -23,13 +23,29 @@ class MainTest extends \PHPUnit\Framework\TestCase
     public function testPreloadedFilteredThings()
     {
         $query = $this->api->query('argomenti')
-            ->with('prodotti');
+            ->with('prodotti.articoli');
         $this->assertSame(14, $query->first()->rel('prodotti')->count());
 
         $query->filterRelation('prodotti', function ($q) {
             $q->where('descrizione', 'like', '7w');
         });
         $this->assertSame(3, $query->first()->rel('prodotti')->count());
+        $this->assertSame([1, 2, 11], $query->first()->values('prodotti.id')->all());
+        $this->assertSame(['descr5'], $query->first()->values('prodotti.descrizione5')->all());
+        $this->assertSame([
+            1,
+            2,
+            2351,
+            3,
+            4,
+            2353,
+            13,
+            14,
+            15,
+            16,
+            2355,
+            2356,
+        ], $query->first()->values('prodotti.articoli.id')->all());
     }
     public function testSchemaStructure()
     {
