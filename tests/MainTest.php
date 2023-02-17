@@ -270,6 +270,14 @@ class MainTest extends \PHPUnit\Framework\TestCase
             'Proiettori LED' => 236829,
             'Profili LED Speciali' => 236842,
         ], $res);
+        $res = $this->api->query('capitoli')
+            ->whereHas('argomenti.prodotti.articoli', function (QueryBuilder $q) {
+                $q->where('codice', 'PRKITINCB');
+            })
+            ->pluck('descrizione');
+        $this->assertSame([
+            'Profili alluminio',
+        ], $res->all());
     }
 
     public function testRelationIds()
