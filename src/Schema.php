@@ -61,11 +61,18 @@ class Schema
         return $this->resource($resource)->query();
     }
 
-    function setFallbackLang(?string $lang) {
+    function setFallbackLang(?string $lang)
+    {
         $this->fallback_lang = $lang;
     }
 
-    function getFallbackLang() {
+    function getFallbackLang()
+    {
         return $this->fallback_lang;
+    }
+
+    static function fromToken(string $token): self
+    {
+        return (new Api('app', $token))->schema;
     }
 }

@@ -15,6 +15,12 @@ class MainTest extends \PHPUnit\Framework\TestCase
         $this->api = new \OnPage\Api($_ENV['COMPANY'], $_ENV['TOKEN']);
     }
 
+    public function testFromToken(): void
+    {
+        $s = \OnPage\Schema::fromToken($_ENV['TOKEN']);
+        $this->assertSame($s->label, $this->api->schema->label);
+    }
+
     public function testSchemaLoaded()
     {
         $this->assertSame(1, $this->api->getRequestCount());

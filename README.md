@@ -20,18 +20,25 @@ require 'vendor/autoload.php';
 
 ### Setup
 
+To start, you need to connect to an On Page Schema (project) using the following function:
+```php
+$schema = \OnPage\Schema::fromToken('MY-API-TOKEN');
+```
+
+Legacy mode:
 ```php
 $api = new \OnPage\Api('acme-inc', $api_token);
+$schema = $api->schema;
 ```
 
 ### Get structure information
 
 ```php
 // Retrieve info about the schema:
-echo $api->schema->label;
+echo $schema->label;
 
 // Retrieve a resource given its name or ID
-$res = $api->schema->resource('products');
+$res = $schema->resource('products');
 foreach ($res->fields() as $field) {
     echo "$field->getLabel()\n"; // Main image
     echo "$field->getLabel('zh')\n"; // "Main Image" but in Chinese
@@ -47,7 +54,7 @@ foreach ($res->fields() as $field) {
 
 ```php
 // Retrieve all records of a resource (returns a laravel collection of \OnPage\Thing)
-$products = $api->schema->query('products')->all();
+$products = $schema->query('products')->all();
 foreach ($products as $prod) {
     // ...
 }
@@ -114,7 +121,7 @@ echo $cat->val('dimension');
 echo $cat->val('description', 'zh'); // you can specify a language
 
 // Or set the default language
-$api->schema->lang = 'zh';
+$schema->lang = 'zh';
 echo $cat->val('name'); // 再见
 
 // The values function is useful for multivalue fields, it will return a laravel collection of values.
