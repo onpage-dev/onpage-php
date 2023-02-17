@@ -248,15 +248,19 @@ class QueryBuilder
         }
 
         $query = new QueryBuilder($this->api, $f->relatedResource());
-        if ($subquery) $subquery($query);
+        if (count($fields)) {
+            $query->whereHas(implode('.', $fields), $subquery, $operator, $value);
+        } else {
+            if ($subquery) $subquery($query);
+        }
 
         $clause = [
             'type' => 'group',
             'resource_id' => $this->resource->id,
             'relation' => [
                 'field' => $field,
-                'operator' => $operator,
-                'value' => $value,
+                'operator' => count($fields) ? '>' : $operator,
+                'value' => count($fields) ? '0' : $value,
             ],
             'children' => $query->filters,
         ];
