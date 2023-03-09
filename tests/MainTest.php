@@ -92,8 +92,8 @@ class MainTest extends \PHPUnit\Framework\TestCase
     function testGetDeletedItemShouldHaveData()
     {
         $prezzo = $this->api->query('prezzi')->withStatus('deleted')->first();
-        $this->assertSame(238508, $prezzo?->id);
-        $this->assertSame(18.8, $prezzo?->val('prezzo1'));
+        $this->assertSame(238508, !$prezzo ? null : $prezzo->id);
+        $this->assertSame(18.8, !$prezzo ? null : $prezzo->val('prezzo1'));
     }
     public function testMap()
     {
@@ -239,7 +239,7 @@ class MainTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('https://lithos.onpage.it/api/storage/dd03bec8a725366c6e6327ceb0b91ffd587be553.png/shutterstock_36442114-ok-NEW.png', $img->link([
             'ext' => 'png',
         ]));
-        $this->assertSame('https://lithos.onpage.it/api/storage/dd03bec8a725366c6e6327ceb0b91ffd587be553.300x300-fit.jpg/shutterstock_36442114-ok-NEW.jpg', $img->thumbnail(width: 300, height: 300, mode: 'fit', ext: 'jpg'));
+        $this->assertSame('https://lithos.onpage.it/api/storage/dd03bec8a725366c6e6327ceb0b91ffd587be553.300x300-fit.jpg/shutterstock_36442114-ok-NEW.jpg', $img->thumbnail(300,  300,  'fit',  'jpg'));
     }
 
     public function testGetAllThings()

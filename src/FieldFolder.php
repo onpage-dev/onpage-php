@@ -18,9 +18,11 @@ class FieldFolder
     public string $updated_at;
     public array $form_fields;
     public array $arrow_fields;
+    private AbstractApi $api;
 
-    function __construct(private AbstractApi $api, object $json)
+    function __construct(AbstractApi $api, object $json)
     {
+        $this->api = $api;
         $this->id = $json->id;
         $this->is_default = $json->is_default;
         $this->name = $json->name;
