@@ -1,0 +1,15 @@
+services:
+
+  php74:
+    build:
+      context: .
+      dockerfile: Dockerfile-74
+    volumes:
+      - ./:/app/
+
+  php81:
+    build:
+      context: .
+      dockerfile: Dockerfile-81
+    volumes:
+      - ./:/app/

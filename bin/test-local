@@ -1,1 +1,2 @@
+#!/bin/bash
 ./vendor/bin/phpunit --stop-on-failure --stop-on-error --testdox --verbose

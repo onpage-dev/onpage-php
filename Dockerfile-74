@@ -1,0 +1,11 @@
+FROM php:7.4-cli
+RUN curl https://getcomposer.org/download/latest-stable/composer.phar > /bin/composer
+RUN chmod a+x /bin/composer
+RUN apt-get update && apt-get -y install zip
+RUN adduser user
+RUN mkdir /app/ && chown user:user /app/
+
+USER user
+WORKDIR /app/
+
+ENTRYPOINT bash
