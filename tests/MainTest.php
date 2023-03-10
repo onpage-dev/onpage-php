@@ -32,7 +32,7 @@ class MainTest extends \PHPUnit\Framework\TestCase
             ->with('prodotti.articoli');
         $this->assertSame(14, $query->first()->rel('prodotti')->count());
 
-        $query->filterRelation('prodotti', function ($q) {
+        $query->filterRelation('prodotti', function (QueryBuilder $q) {
             $q->where('descrizione', 'like', '7w');
         });
         $this->assertSame(3, $query->first()->rel('prodotti')->count());
@@ -52,6 +52,28 @@ class MainTest extends \PHPUnit\Framework\TestCase
             2355,
             2356,
         ], $query->first()->values('prodotti.articoli.id')->all());
+    }
+
+    public function testPreloadedFilteredThingsLimit()
+    {
+        $arg = $this->api->query('argomenti')
+            ->with('prodotti')
+            ->filterRelation('prodotti', function (QueryBuilder $q) {
+                $q->limit(1);
+            })
+            ->first();
+        $this->assertSame([236890], $arg->rel('prodotti')->pluck('id')->all());
+    }
+    public function testPreloadedFilteredThingsOffset()
+    {
+        $arg = $this->api->query('argomenti')
+            ->with('prodotti')
+            ->filterRelation('prodotti', function (QueryBuilder $q) {
+                $q->limit(1);
+                $q->offset(1);
+            })
+            ->first();
+        $this->assertSame([236891], $arg->rel('prodotti')->pluck('id')->all());
     }
     public function testSchemaStructure()
     {

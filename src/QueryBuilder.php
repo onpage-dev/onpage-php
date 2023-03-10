@@ -131,6 +131,14 @@ class QueryBuilder
         $qb = new QueryBuilder($this->api, $loader->relation->relatedResource());
         $subquery($qb);
         $loader->filters[] = $qb->filters;
+
+        if (!is_null($qb->getLimit())) {
+            $loader->limit = $qb->getLimit();
+        }
+        if (!is_null($qb->getOffset())) {
+            $loader->offset = $qb->getOffset();
+        }
+
         return $this;
     }
 
@@ -201,6 +209,15 @@ class QueryBuilder
     {
         $this->limit = $limit;
         return $this;
+    }
+
+    function getLimit()
+    {
+        return $this->limit;
+    }
+    function getOffset()
+    {
+        return $this->offset;
     }
 
     public function relatedTo(Field $field, int $thing_id): QueryBuilder

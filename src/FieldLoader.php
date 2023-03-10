@@ -8,6 +8,8 @@ class FieldLoader
     public ?array $fields = ['+'];
     public ?array $relations = [];
     public ?array $filters = [];
+    public ?int $limit = null;
+    public ?int $offset = null;
     public ?string $as = null;
 
     function __construct(Field $relation = null, string $as = null)
@@ -58,6 +60,8 @@ class FieldLoader
                 'as' => $this->as,
                 'filters' => $this->filters,
             ];
+            if (!is_null($this->limit)) $ret['limit'] = $this->limit;
+            if (!is_null($this->offset)) $ret['offset'] = $this->offset;
         }
         return $ret;
     }
