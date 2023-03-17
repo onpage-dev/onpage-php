@@ -6,7 +6,7 @@ With this library you can easy query your data using an On Page ® API token.
 
 To install this library in your existing composer project, or update to the latest version, you can launch:
 ```
-composer require onpage-php:^v1.1
+composer require onpage-dev/onpage-php:^v1.1
 ```
 
 Of course, remember to include the composer autoload:
