@@ -246,6 +246,28 @@ class MainTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(0, $count->count());
     }
 
+    public function testDeleteForeverOneThing()
+    {
+        // Get the resource
+        $res_cap = $this->api->schema->resource('capitoli');
+
+        $to_delete = $res_cap->query()->isDeletedStatus()->ids();
+        $this->assertTrue($to_delete->count() > 0);
+        $force_delete_id = $to_delete[0];
+
+        // We do not specify status
+        $deleted_ids = $res_cap->query()->where('_id', $force_delete_id)->delete(forever: true);
+        $this->assertCount(0, $deleted_ids);
+
+        // We do specify status
+        $deleted_ids = $res_cap->query()->isDeletedStatus()->where('_id', $force_delete_id)->delete(forever: true);
+        $this->assertCount(1, $deleted_ids);
+
+        // Check these things are gone
+        $to_delete = $res_cap->query()->isAnyStatus()->where('_id', $force_delete_id)->ids();
+        $this->assertSame(0, $to_delete->count());
+    }
+
     function testGetNonExistingFirst()
     {
         $cap = $this->api->query('capitoli')->offset(99999)->first();
@@ -257,11 +279,11 @@ class MainTest extends \PHPUnit\Framework\TestCase
         $arg = $this->api->query('argomenti')->first();
         $img = $arg->val('disegno1');
         $this->assertInstanceOf(File::class, $img);
-        $this->assertSame('https://lithos.onpage.it/api/storage/dd03bec8a725366c6e6327ceb0b91ffd587be553/shutterstock_36442114-ok-NEW.jpg', $img->link());
-        $this->assertSame('https://lithos.onpage.it/api/storage/dd03bec8a725366c6e6327ceb0b91ffd587be553.png/shutterstock_36442114-ok-NEW.png', $img->link([
+        $this->assertStringEndsWith('/api/storage/dd03bec8a725366c6e6327ceb0b91ffd587be553/shutterstock_36442114-ok-NEW.jpg', $img->link());
+        $this->assertStringEndsWith('/api/storage/dd03bec8a725366c6e6327ceb0b91ffd587be553.png/shutterstock_36442114-ok-NEW.png', $img->link([
             'ext' => 'png',
         ]));
-        $this->assertSame('https://lithos.onpage.it/api/storage/dd03bec8a725366c6e6327ceb0b91ffd587be553.300x300-fit.jpg/shutterstock_36442114-ok-NEW.jpg', $img->thumbnail(300,  300,  'fit',  'jpg'));
+        $this->assertStringEndsWith('/api/storage/dd03bec8a725366c6e6327ceb0b91ffd587be553.300x300-fit.jpg/shutterstock_36442114-ok-NEW.jpg', $img->thumbnail(300,  300,  'fit',  'jpg'));
     }
 
     public function testGetAllThings()

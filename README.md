@@ -99,10 +99,20 @@ $api->query('products')
     
     ->all();
 
-// You can just smply delete data the same way:
+// You can just simply move data to trash the same way:
 $api->query('products')
     ->where(...)
     ->delete();
+
+// Or delete elements bypassing the trash:
+$api->query('products')
+    ->where(...)
+    ->delete(forever: true);
+
+// Filter by element status trash, any
+$api->query('products')
+    ->where(...)
+    ->delete(forever: true);
 ```
 
 ### Get thing values

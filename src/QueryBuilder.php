@@ -118,9 +118,10 @@ class QueryBuilder
         $res = $this->api->get('things', $this->build('first'));
         return $res ? new Thing($this->api, $res) : null;
     }
-    public function delete(): ?array
+    public function delete(bool $forever = false): ?array
     {
         $req = $this->build('delete');
+        if ($forever) $req['forever'] = true;
         $res = $this->api->delete('things', $req);
         return $res;
     }
@@ -238,6 +239,14 @@ class QueryBuilder
         $filter = [$field, $op, $value];
         $this->filters[] = $filter;
         return $this;
+    }
+    /** @param array|Collection $values */
+    public function whereIn(string $field, $values)
+    {
+        if ($values instanceof Collection) {
+            $values = $values->all();
+        }
+        return $this->where($field, 'in', $values);
     }
     public function whereEmpty(string $field)
     {
