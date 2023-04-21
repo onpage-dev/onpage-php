@@ -256,11 +256,11 @@ class MainTest extends \PHPUnit\Framework\TestCase
         $force_delete_id = $to_delete[0];
 
         // We do not specify status
-        $deleted_ids = $res_cap->query()->where('_id', $force_delete_id)->delete(forever: true);
+        $deleted_ids = $res_cap->query()->where('_id', $force_delete_id)->delete(true);
         $this->assertCount(0, $deleted_ids);
 
         // We do specify status
-        $deleted_ids = $res_cap->query()->isDeletedStatus()->where('_id', $force_delete_id)->delete(forever: true);
+        $deleted_ids = $res_cap->query()->isDeletedStatus()->where('_id', $force_delete_id)->delete(true);
         $this->assertCount(1, $deleted_ids);
 
         // Check these things are gone
