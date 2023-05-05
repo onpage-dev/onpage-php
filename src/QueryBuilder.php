@@ -145,7 +145,12 @@ class QueryBuilder
             'table_config' => $config,
             'format' => 'json',
         ];
-        return $this->api->get('things', $this->build('table-view', $options));
+        $ret = $this->api->get('things', $this->build('table-view', $options));
+        // Convert each line from object to array
+        foreach ($ret as $i => $row) {
+            $ret[$i] = (array) $row;
+        }
+        return $ret;
     }
     public function delete(bool $forever = false): ?array
     {
