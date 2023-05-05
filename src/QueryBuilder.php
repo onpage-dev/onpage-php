@@ -118,6 +118,35 @@ class QueryBuilder
         $res = $this->api->get('things', $this->build('first'));
         return $res ? new Thing($this->api, $res) : null;
     }
+    /**
+     * @param array|int $config
+     * @param string $name
+     * @return string the link to the generated excel file
+     */
+    public function downloadTable($config, string $name): string
+    {
+        $options = [
+            'table_config' => $config,
+        ];
+        $ext = pathinfo($name, PATHINFO_EXTENSION);
+        if ($ext == 'csv') {
+            $options['format'] = 'csv';
+        } elseif (in_array($ext, ['xls', 'xlsx'])) {
+            $options['format'] = 'excel';
+        } else {
+            throw new \Error("File name must end with .csv or .xlsx");
+        }
+        $file_token = $this->api->get('things', $this->build('table-view', $options));
+        return $this->api->storageLink($file_token, $name);
+    }
+    public function downloadTableAsJson($config): array
+    {
+        $options = [
+            'table_config' => $config,
+            'format' => 'json',
+        ];
+        return $this->api->get('things', $this->build('table-view', $options));
+    }
     public function delete(bool $forever = false): ?array
     {
         $req = $this->build('delete');
@@ -172,7 +201,7 @@ class QueryBuilder
         }
         return $this;
     }
-    private function build(string $return): array
+    private function build(string $return, array $options = []): array
     {
         $data = [
             'resource' => $this->resource->name,
@@ -185,7 +214,7 @@ class QueryBuilder
                 'use_field_names' => true,
                 'status' => $this->trash_status,
             ],
-        ];
+        ] + $options;
 
         if ($this->related_to) {
             $data['related_to'] = $this->related_to;
