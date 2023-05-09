@@ -48,11 +48,18 @@ abstract class AbstractApi
     {
         $this->req_count = 0;
     }
-    function storageLink(string $token, string $name = null): string
+    function storageLink(string $token, string $name = null, bool $force_download = false): string
     {
         $url = "{$this->api_url}/storage/$token";
         if ($name) {
             $url .= '/' . rawurlencode($name);
+        }
+        $options = [];
+        if ($force_download) {
+            $options['download'] = 1;
+        }
+        if (count($options)) {
+            $url .= '?' . http_build_query($options);
         }
         return $url;
     }

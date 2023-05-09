@@ -145,28 +145,34 @@ To get a file or image url use the `->link()` function. The link will point to t
 
 ```php
 # original size
-$product->val('specsheet')->name // icecream-spec.pdf
-$product->val('specsheet')->token // R417C0YAM90RF
-$product->val('specsheet')->link() // https://acme-inc.onpage.it/api/storage/R417C0YAM90RF?name=icecream-spec.pdf
+$product->file('specsheet')->name // icecream-spec.pdf
+$product->file('specsheet')->token // R417C0YAM90RF
+$product->file('specsheet')->link() // https://acme-inc.onpage.it/api/storage/R417C0YAM90RF?name=icecream-spec.pdf
+
+// Force download (by default the browser will try to preview the file, e.g. pdf/images)
+$product->file('specsheet')->link([ 'download' => true ])
+
+// Customize file name
+$product->file('specsheet')->link([ 'name' => 'my custom name.pdf' ])
 ```
 
 To turn images into a thumbnail add an array of options as shown below:
 
 ```php
 # maintain proportions width 200px
-$product->val('cover_image')->link(['x' => 200])
+$product->file('cover_image')->link(['x' => 200])
 
 # maintain proportions height 100px
-$product->val('cover_image')->link(['y' => 100])
+$product->file('cover_image')->link(['y' => 100])
 
 # crop image to width 200px and height 100px
-$product->val('cover_image')->link(['x' => 200, 'y' => 100])
+$product->file('cover_image')->link(['x' => 200, 'y' => 100])
 
 # maintain proportions and contain in a rectangle of width 200px and height 100px
-$product->val('cover_image')->link(['x' => 200, 'y' => 100, 'contain' => true])
+$product->file('cover_image')->link(['x' => 200, 'y' => 100, 'contain' => true])
 
 # convert the image to png (default is jpg)
-$product->val('cover_image')->link(['x' => 200, 'format' => 'png'])
+$product->file('cover_image')->link(['x' => 200, 'format' => 'png'])
 ```
 
 #### Other utilities

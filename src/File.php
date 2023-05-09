@@ -24,7 +24,8 @@ class File
         return in_array(strtolower($this->ext), ['png', 'gif', 'jpg', 'webp', 'eps', 'dwg', 'svg', 'tiff']);
     }
 
-    function thumbnail(int $width = null, int $height = null, ?string $mode = 'contain', ?string $ext = null) {
+    function thumbnail(int $width = null, int $height = null, ?string $mode = 'contain', ?string $ext = null)
+    {
         return $this->link([
             'x' => $width,
             'y' => $height,
@@ -61,7 +62,7 @@ class File
             $name = self::replaceFilenameExtension($name, $opts['ext']);
         }
 
-        return $this->api->storageLink("{$this->token}{$suffix}", $name);
+        return $this->api->storageLink("{$this->token}{$suffix}", $name, (bool) (isset($opts['download']) && $opts['download']));
     }
 
     static function replaceFilenameExtension(string $filename, ?string $ext)

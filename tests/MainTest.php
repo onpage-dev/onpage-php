@@ -277,7 +277,7 @@ class MainTest extends \PHPUnit\Framework\TestCase
     public function testFiles()
     {
         $arg = $this->api->query('argomenti')->first();
-        $img = $arg->val('disegno1');
+        $img = $arg->file('disegno1');
         $this->assertInstanceOf(File::class, $img);
         $this->assertStringEndsWith('/api/storage/dd03bec8a725366c6e6327ceb0b91ffd587be553/shutterstock_36442114-ok-NEW.jpg', $img->link());
         $this->assertStringEndsWith('/api/storage/dd03bec8a725366c6e6327ceb0b91ffd587be553.png/shutterstock_36442114-ok-NEW.png', $img->link([
