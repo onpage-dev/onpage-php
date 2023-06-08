@@ -264,6 +264,12 @@ class QueryBuilder
         return $this;
     }
 
+    public function addRawFilter(array $filter)
+    {
+        $this->filters[] = $filter;
+        return $this;
+    }
+    
     public function where(string $field, $op, $value = null)
     {
         if (is_null($value)) {
