@@ -19,6 +19,7 @@ class Field
     public ?int $rel_res_id;
     public ?int $rel_field_id;
     public int $resource_id;
+    private array $opts;
     private AbstractApi $api;
     function __construct(AbstractApi $api, object $json)
     {
@@ -35,6 +36,7 @@ class Field
         $this->resource_id = $json->resource_id;
         $this->rel_res_id = $json->rel_res_id;
         $this->rel_field_id = $json->rel_field_id;
+        $this->opts = (array) $json->opts;
     }
 
     function markAsUsed()
@@ -100,5 +102,10 @@ class Field
     function getFolders(): Collection
     {
         return $this->resource()->folders()->filter(fn (FieldFolder $f) => in_array($this->id, $f->form_fields))->values();
+    }
+
+    function getOpts()
+    {
+        return $this->opts;
     }
 }
