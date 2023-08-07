@@ -25,31 +25,6 @@ To start, you need to connect to an On Page Schema (project) using the following
 $schema = \OnPage\Schema::fromToken('MY-API-TOKEN');
 ```
 
-Legacy mode:
-```php
-$api = new \OnPage\Api('acme-inc', $api_token);
-$schema = $api->schema;
-```
-
-### Get structure information
-
-```php
-// Retrieve info about the schema:
-echo $schema->label;
-
-// Retrieve a resource given its name or ID
-$res = $schema->resource('products');
-foreach ($res->fields() as $field) {
-    echo "$field->getLabel()\n"; // Main image
-    echo "$field->getLabel('zh')\n"; // "Main Image" but in Chinese
-    echo "$field->name\n"; // "main_image"
-    echo "$field->type\n"; // string|file|image|real|int|text|...
-    echo "$field->unit\n"; // null|kg|...
-    echo "$field->is_multiple\n"; // true|false
-    echo "$field->is_translatable\n"; // true|false
-}
-```
-
 ### Query your data
 
 ```php
@@ -76,8 +51,16 @@ $api->query('products')
     ->where('name', 'like', 'shoes') // you can specify a different operator
     ->where('category.name', 'Nike') // you can query relations
     ->where('dimension', '>', 10) // you get it
+    ->whereIn('size', [42, 43, 44])
     ->all(); // returns a collection with all your records
 
+// Join filters with the OR clause: get all products for the adidas or nike brands
+$api->query('products')
+    ->whereOneOf(function(\OnPage\QueryBuilder $q) {
+        ->where('price', 'Nike')
+        ->where('brand', 'Adidas')
+    })
+    ->all();
 
 // Advanced filtering by relation
 $api->query('products')
@@ -345,4 +328,23 @@ $editor->setRel('features', [
     547023,
     240289,
 ]);
+```
+
+### Get structure information
+
+```php
+// Retrieve info about the schema:
+echo $schema->label;
+
+// Retrieve a resource given its name or ID
+$res = $schema->resource('products');
+foreach ($res->fields() as $field) {
+    echo "$field->getLabel()\n"; // Main image
+    echo "$field->getLabel('zh')\n"; // "Main Image" but in Chinese
+    echo "$field->name\n"; // "main_image"
+    echo "$field->type\n"; // string|file|image|real|int|text|...
+    echo "$field->unit\n"; // null|kg|...
+    echo "$field->is_multiple\n"; // true|false
+    echo "$field->is_translatable\n"; // true|false
+}
 ```
