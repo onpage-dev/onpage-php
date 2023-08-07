@@ -155,7 +155,7 @@ $product->file('cover_image')->link(['x' => 200, 'y' => 100])
 $product->file('cover_image')->link(['x' => 200, 'y' => 100, 'contain' => true])
 
 # convert the image to png (default thumbnail extension is png)
-$product->file('cover_image')->link(['x' => 200, 'format' => 'png'])
+$product->file('cover_image')->link(['x' => 200, 'ext' => 'png'])
 ```
 
 #### Other utilities
