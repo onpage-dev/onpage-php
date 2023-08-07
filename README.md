@@ -154,7 +154,7 @@ $product->file('cover_image')->link(['x' => 200, 'y' => 100])
 # maintain proportions and contain in a rectangle of width 200px and height 100px
 $product->file('cover_image')->link(['x' => 200, 'y' => 100, 'contain' => true])
 
-# convert the image to png (default is jpg)
+# convert the image to png (default thumbnail extension is png)
 $product->file('cover_image')->link(['x' => 200, 'format' => 'png'])
 ```
 
