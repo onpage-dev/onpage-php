@@ -10,6 +10,8 @@ class Thing implements JsonSerializable
 {
     private object $json;
     public int $id;
+    public string $created_at;
+    public string $updated_at;
     private AbstractApi $api;
     private array $relations = [];
     public function __construct(AbstractApi $api, object $json)
@@ -17,6 +19,8 @@ class Thing implements JsonSerializable
         $this->api = $api;
         $this->json = $json;
         $this->id = $json->id;
+        $this->created_at = $json->created_at;
+        $this->updated_at = $json->updated_at;
         foreach ($json->relations as $field_name => $related_things) {
             $this->setRelation($this->resource()->field($field_name), ThingCollection::fromResponse($api, $related_things));
         }

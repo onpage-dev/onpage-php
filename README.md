@@ -5,6 +5,7 @@ With this library you can easy query your data using an On Page ® API token.
 ## Installation
 
 To install this library in your existing composer project, or update to the latest version, you can launch:
+
 ```
 composer require onpage-dev/onpage-php:^v1.1
 ```
@@ -21,6 +22,7 @@ require 'vendor/autoload.php';
 ### Setup
 
 To start, you need to connect to an On Page Schema (project) using the following function:
+
 ```php
 $schema = \OnPage\Schema::fromToken('MY-API-TOKEN');
 ```
@@ -42,8 +44,11 @@ $prod = $api->query('products')->first();
 
 ```php
 // Retrieve all records of a resource (returns a laravel collection of \OnPage\Thing)
+// NOTE: system fields must be prefixed with the _ symbol
 $api->query('products')
     ->where('_id', 42) // = is the default operator
+    ->where('_created_at', '<', '2024-01-01 00:00:00')
+    ->where('_updated_at', '>=', '2024-01-01 00:00:00')
     ->first();
 
 // Other filters
@@ -64,22 +69,22 @@ $api->query('products')
 
 // Advanced filtering by relation
 $api->query('products')
-    
+
     // only retrieve products that have at least one associated category
     ->whereHas('category')
-    
+
     // only retrieve products that have zero associated categories
     ->whereHas('category', null, '=', 0)
-    
+
     // only retrieve products that have at least one variant with at least one color
     ->whereHas('variant.color')
-    
+
     // Only get products that have at least one category that satisfies these 2 conditions:
     ->whereHas('category', function(\OnPage\QueryBuilder $q) {
       $q->where('is_online', true);
       $q->where('name', 'like', 'shoes');
     })
-    
+
     ->all();
 
 // You can just simply move data to trash the same way:
@@ -214,7 +219,7 @@ $cat = $api->query('categories')
         $q->where('is_online', true);
     })
     ->first();
- 
+
 ```
 
 # Creating and updating things
@@ -271,7 +276,9 @@ $editor->save();
 ```
 
 ## Limiting modified languages
+
 By default, even if you update a single language, the writer will delete the data on other languages. If you only need to edit certain languages and maintain the current values for the others, you can specify which languages you are working on as follows:
+
 ```php
 // Update the chinese description without deleting the english description:
 $editor = $product->editor();
