@@ -12,17 +12,17 @@ class Thing implements JsonSerializable
     public int $id;
     public string $created_at;
     public string $updated_at;
-    private AbstractApi $api;
+    private Schema $schema;
     private array $relations = [];
-    public function __construct(AbstractApi $api, object $json)
+    public function __construct(Schema $schema, object $json)
     {
-        $this->api = $api;
+        $this->schema = $schema;
         $this->json = $json;
         $this->id = $json->id;
         $this->created_at = $json->created_at;
         $this->updated_at = $json->updated_at;
         foreach ($json->relations as $field_name => $related_things) {
-            $this->setRelation($this->resource()->field($field_name), ThingCollection::fromResponse($api, $related_things));
+            $this->setRelation($this->resource()->field($field_name), ThingCollection::fromResponse($schema, $related_things));
         }
     }
 
@@ -55,9 +55,9 @@ class Thing implements JsonSerializable
     {
         // Try to return values in default language or using the fallback language if set
         if (is_null($lang)) {
-            $ret = $this->values($field_path, $this->api->schema->lang, $field);
-            if ($ret->isEmpty() && $this->api->schema->getFallbackLang()) {
-                $ret = $this->values($field_path, $this->api->schema->getFallbackLang(), $field);
+            $ret = $this->values($field_path, $this->schema->lang, $field);
+            if ($ret->isEmpty() && $this->schema->getFallbackLang()) {
+                $ret = $this->values($field_path, $this->schema->getFallbackLang(), $field);
             }
             return $ret;
         }
@@ -98,7 +98,7 @@ class Thing implements JsonSerializable
 
         if ($field->isMedia()) {
             $values->transform(function ($v) {
-                return new File($this->api, $v);
+                return new File($this->schema->api, $v);
             });
         }
 
@@ -117,7 +117,7 @@ class Thing implements JsonSerializable
         $field = $this->resolveField($field_name);
         $codename = $field->identifier();
         if (!isset($this->relations[$codename])) {
-            if (!$this->api->allow_dynamic_relations) {
+            if (!$this->schema->allow_dynamic_relations) {
                 throw new \Exception("The relation $codename was not loaded");
             }
             $with = [];
@@ -174,7 +174,7 @@ class Thing implements JsonSerializable
 
     private function loadRelation(Field $field, array $with = [])
     {
-        $result = $this->api->query($field->relatedResource()->name)
+        $result = $this->schema->query($field->relatedResource()->name)
             ->relatedTo($field, $this->id)
             ->with($with)
             ->all();
@@ -188,7 +188,7 @@ class Thing implements JsonSerializable
 
     public function resource(): Resource
     {
-        return $this->api->schema->resource($this->json->resource_id);
+        return $this->schema->resource($this->json->resource_id);
     }
 
     function editor(DataWriter $updater = null): ThingEditor

@@ -10,14 +10,14 @@ class QueryBuilder
     private array $filters = [];
     private FieldLoader $field_loader;
     private ?array $related_to = null;
-    private AbstractApi $api;
+    private Schema $schema;
     private ?int $limit = null;
     private ?int $offset = null;
     private string $trash_status = 'active'; // active|deleted|any;
 
-    public function __construct(AbstractApi $api, Resource $resource)
+    public function __construct(Schema $schema, Resource $resource)
     {
-        $this->api = $api;
+        $this->schema = $schema;
         $this->resource = $resource;
         $this->field_loader = new FieldLoader();
     }
@@ -48,7 +48,7 @@ class QueryBuilder
             }, $chunk_size);
             return new ThingCollection($things);
         } else {
-            return ThingCollection::fromResponse($this->api, $this->api->get('things', $this->build('list')));
+            return ThingCollection::fromResponse($this->schema, $this->schema->api->get('things', $this->build('list')));
         }
     }
 
@@ -57,7 +57,7 @@ class QueryBuilder
      */
     public function count(): int
     {
-        return $this->api->get('things', $this->build('count'));
+        return $this->schema->api->get('things', $this->build('count'));
     }
 
     /**
@@ -91,7 +91,7 @@ class QueryBuilder
     /** @return Collection<int> */
     public function ids(): Collection
     {
-        return collect($this->api->get('things', $this->build('ids')));
+        return collect($this->schema->api->get('things', $this->build('ids')));
     }
     public function map(string $keyfield, string $valuefield = '_id', $lang = null, int $chunk_size = 0): array
     {
@@ -110,13 +110,13 @@ class QueryBuilder
     {
         $data = $this->build('pluck');
         $data['field'] = $field;
-        return collect($this->api->get('things', $data));
+        return collect($this->schema->api->get('things', $data));
     }
 
     public function first(): ?Thing
     {
-        $res = $this->api->get('things', $this->build('first'));
-        return $res ? new Thing($this->api, $res) : null;
+        $res = $this->schema->api->get('things', $this->build('first'));
+        return $res ? new Thing($this->schema, $res) : null;
     }
     /**
      * @param array|int $config
@@ -136,8 +136,8 @@ class QueryBuilder
         } else {
             throw new \Error("File name must end with .csv or .xlsx");
         }
-        $file_token = $this->api->get('things', $this->build('table-view', $options));
-        return $this->api->storageLink($file_token, $name);
+        $file_token = $this->schema->api->get('things', $this->build('table-view', $options));
+        return $this->schema->api->storageLink($file_token, $name);
     }
     public function downloadTableAsJson($config): array
     {
@@ -145,7 +145,7 @@ class QueryBuilder
             'table_config' => $config,
             'format' => 'json',
         ];
-        $ret = $this->api->get('things', $this->build('table-view', $options));
+        $ret = $this->schema->api->get('things', $this->build('table-view', $options));
         // Convert each line from object to array
         foreach ($ret as $i => $row) {
             $ret[$i] = (array) $row;
@@ -156,14 +156,14 @@ class QueryBuilder
     {
         $req = $this->build('delete');
         if ($forever) $req['forever'] = true;
-        $res = $this->api->delete('things', $req);
+        $res = $this->schema->api->delete('things', $req);
         return $res;
     }
     /** @param string|array $rel */
     public function filterRelation($rel, callable $subquery)
     {
         $loader = $this->field_loader->getRelation($rel);
-        $qb = new QueryBuilder($this->api, $loader->relation->relatedResource());
+        $qb = new QueryBuilder($this->schema, $loader->relation->relatedResource());
         $subquery($qb);
         $loader->filters[] = $qb->filters;
 
@@ -214,7 +214,7 @@ class QueryBuilder
             'fields' => $this->field_loader->encode(),
             'return' => $return,
             'options' => [
-                'no_labels' => !$this->api->download_thing_labels,
+                'no_labels' => !$this->schema->api->download_thing_labels,
                 'hyper_compact' => true,
                 'use_field_names' => true,
                 'status' => $this->trash_status,
@@ -313,7 +313,7 @@ class QueryBuilder
             );
         }
 
-        $query = new QueryBuilder($this->api, $f->relatedResource());
+        $query = new QueryBuilder($this->schema, $f->relatedResource());
         if (count($fields)) {
             $query->whereHas(implode('.', $fields), $subquery, $operator, $value);
         } else {
@@ -359,7 +359,7 @@ class QueryBuilder
 
     function whereOneOf(callable $fn)
     {
-        $builder = new QueryBuilder($this->api, $this->resource);
+        $builder = new QueryBuilder($this->schema, $this->resource);
         $fn($builder);
         if (!empty($builder->filters)) {
             $this->filters[] = [

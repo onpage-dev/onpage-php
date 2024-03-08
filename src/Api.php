@@ -6,23 +6,33 @@ use GuzzleHttp\Client;
 
 class Api extends AbstractApi
 {
-    private Client $http;
+    protected Client $http;
 
-    function __construct(string $endpoint, string $token, float $timeout = 60000)
+    function __construct(string $token, string $domain = 'onpage.it', float $timeout = 60000, bool $is_user_mode = false)
     {
-        if (!preg_match('/^https?:/', $endpoint)) {
-            $endpoint = "https://$endpoint.onpage.it/api/";
-        }
-        // Remove final /
-        $endpoint = preg_replace('/\\/+$/', '', $endpoint);
+        $this->token = $token;
+        $this->domain = $domain;
+        $this->is_user_mode = $is_user_mode;
 
-        $this->api_url = $endpoint;
+        $additional_headers = [];
+
+        if ($this->is_user_mode) {
+            $additional_headers["Authorization"] = "Bearer $token";
+        }
+
         $this->http = new Client([
             'timeout' => $timeout,
-            'base_uri' => "{$this->api_url}/view/{$token}/",
-            'headers' => ['Accept-Encoding' => 'gzip'],
+            'headers' => ['Accept-Encoding' => 'gzip'] + $additional_headers,
+            'base_uri' => $this->getBaseUri(),
         ]);
-        $this->loadSchema();
+    }
+
+    function getBaseUri()
+    {
+        if ($this->is_user_mode)
+            return "https://api.{$this->domain}/";
+        else
+            return "https://api.{$this->domain}/view/{$this->token}/";
     }
 
     function request(string $method, string $endpoint, array $data = [])

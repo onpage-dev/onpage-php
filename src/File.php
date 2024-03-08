@@ -8,9 +8,9 @@ class File
     public string $token;
     public string $ext;
     public int $size;
-    private AbstractApi $api;
+    private Api $api;
 
-    function __construct(AbstractApi $api, object $file)
+    function __construct(Api $api, object $file)
     {
         $this->api = $api;
         $this->name = $file->name;

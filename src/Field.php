@@ -20,10 +20,10 @@ class Field
     public ?int $rel_field_id;
     public int $resource_id;
     private array $opts;
-    private AbstractApi $api;
-    function __construct(AbstractApi $api, object $json)
+    private Schema $schema;
+    function __construct(Schema $schema, object $json)
     {
-        $this->api = $api;
+        $this->schema = $schema;
         $this->id = $json->id;
         $this->is_multiple = $json->is_multiple;
         $this->is_translatable = $json->is_translatable;
@@ -51,7 +51,7 @@ class Field
     function getLabel(?string $lang = null): string
     {
         if (isset($this->labels[$lang])) return $this->labels[$lang];
-        $lang = $this->api->schema->lang;
+        $lang = $this->schema->lang;
         if (isset($this->labels[$lang])) return $this->labels[$lang];
         return $this->name;
     }
@@ -59,7 +59,7 @@ class Field
     function getDescription(?string $lang = null): string
     {
         if (isset($this->descriptions[$lang])) return $this->descriptions[$lang];
-        $lang = $this->api->schema->lang;
+        $lang = $this->schema->lang;
         if (isset($this->descriptions[$lang])) return $this->descriptions[$lang];
         return $this->name;
     }
@@ -69,7 +69,7 @@ class Field
         $identifier = $this->name;
         if ($this->is_translatable) {
             if (!$lang) {
-                $lang = $this->api->schema->lang;
+                $lang = $this->schema->lang;
             }
             $identifier .= "_$lang";
         }
@@ -77,7 +77,7 @@ class Field
     }
     function resource(): Resource
     {
-        return $this->api->schema->resource($this->resource_id);
+        return $this->schema->resource($this->resource_id);
     }
 
     function isMedia(): bool
@@ -90,7 +90,7 @@ class Field
         if (!$this->rel_res_id) {
             throw new \Exception("Field $this->name has no related resource");
         }
-        return $this->api->schema->resource($this->rel_res_id);
+        return $this->schema->resource($this->rel_res_id);
     }
     function relatedField(): Field
     {

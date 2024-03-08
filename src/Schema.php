@@ -8,7 +8,7 @@ class Schema
 {
     public $id;
     public $label;
-    private AbstractApi $api;
+    public AbstractApi $api;
     private array $id_to_resource;
     private array $id_to_field;
     private array $name_to_resource;
@@ -16,6 +16,7 @@ class Schema
     public array $langs;
     private ?string $fallback_lang = null;
     public string $lang;
+    public $allow_dynamic_relations = false;
 
     public function __construct(AbstractApi $api, object $json)
     {
@@ -25,7 +26,7 @@ class Schema
         $this->langs = $json->langs;
         $this->lang = $this->langs[0];
         foreach ($json->resources as $res_json) {
-            $res = new Resource($this->api, $res_json);
+            $res = new Resource($this, $res_json);
             $this->resources[] = $res;
             $this->id_to_resource[$res_json->id] = $res;
             $this->name_to_resource[$res_json->name] = $res;
@@ -73,6 +74,43 @@ class Schema
 
     static function fromToken(string $token): self
     {
-        return (new Api('app', $token))->schema;
+        return (new Api($token))->loadSchema();
+    }
+
+    /**
+     * Dumps a csv containing information about
+     * the used fields
+     */
+    function dumpUsedFields(string $csv_path)
+    {
+        $file = fopen($csv_path, 'wb');
+
+        fputcsv($file, [
+            'Resource',
+            'Resource name',
+            'Field',
+            'Field name',
+            'Field type',
+        ]);
+
+        foreach ($this->resources() as $res) {
+            $used = false;
+            foreach ($res->fields() as $field) {
+                if (!$field->hasBeenUsed()) continue;
+                $used = true;
+                fputcsv($file, [
+                    $res->label,
+                    $res->name,
+                    $field->label,
+                    $field->name,
+                    $field->type,
+                ]);
+            }
+            if ($used) {
+                fputcsv($file, []);
+            }
+        }
+
+        fclose($file);
     }
 }

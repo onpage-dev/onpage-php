@@ -20,10 +20,10 @@ class Resource
     private array $id_to_folder;
     private array $name_to_folder;
 
-    private AbstractApi $api;
-    public function __construct(AbstractApi $api, object $json)
+    private Schema $schema;
+    public function __construct(Schema $schema, object $json)
     {
-        $this->api = $api;
+        $this->schema = $schema;
         $this->id = $json->id;
         $this->name = $json->name;
         $this->label = $json->label;
@@ -38,7 +38,7 @@ class Resource
         $this->id_to_field = [];
         $this->name_to_field = [];
         foreach ($fields as $field_json) {
-            $field = new Field($this->api, $field_json);
+            $field = new Field($this->schema, $field_json);
             $this->fields[] = $field;
             $this->id_to_field[$field_json->id] = $field;
             $this->name_to_field[$field_json->name] = $field;
@@ -50,7 +50,7 @@ class Resource
         $this->id_to_folder = [];
         $this->name_to_folder = [];
         foreach ($folders ?? [] as $folder_json) {
-            $folder = new FieldFolder($this->api, $folder_json);
+            $folder = new FieldFolder($this->schema, $folder_json);
             $this->folders[] = $folder;
             $this->id_to_folder[$folder_json->id] = $folder;
             $this->name_to_folder[$folder_json->name] = $folder;
@@ -60,7 +60,7 @@ class Resource
     function getLabel(?string $lang = null): string
     {
         if (isset($this->labels[$lang])) return $this->labels[$lang];
-        $lang = $this->api->schema->lang;
+        $lang = $this->schema->lang;
         if (isset($this->labels[$lang])) return $this->labels[$lang];
         return $this->name;
     }
@@ -106,12 +106,12 @@ class Resource
 
     function writer(): DataWriter
     {
-        return new DataWriter($this->api, $this);
+        return new DataWriter($this->schema, $this);
     }
 
     function query(): QueryBuilder
     {
-        return new QueryBuilder($this->api, $this);
+        return new QueryBuilder($this->schema, $this);
     }
 
     /**

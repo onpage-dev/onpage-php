@@ -9,26 +9,30 @@ use OnPage\Thing;
 class MainTest extends \PHPUnit\Framework\TestCase
 {
     private \OnPage\Api $api;
+    private \OnPage\Schema $schema;
 
     public function setUp(): void
     {
-        $this->api = new \OnPage\Api($_ENV['COMPANY'], $_ENV['TOKEN']);
+        $this->api = new \OnPage\Api($_ENV['TOKEN']);
+        $this->assertSame(0, $this->api->getRequestCount());
+        $this->schema = $this->api->loadSchema();
+        $this->assertSame(1, $this->api->getRequestCount());
     }
 
     public function testFromToken(): void
     {
         $s = \OnPage\Schema::fromToken($_ENV['TOKEN']);
-        $this->assertSame($s->label, $this->api->schema->label);
+        $this->assertSame($s->label, $this->schema->label);
     }
 
     public function testSchemaLoaded()
     {
         $this->assertSame(1, $this->api->getRequestCount());
-        $this->assertTrue(mb_strlen($this->api->schema->label) > 0);
+        $this->assertTrue(mb_strlen($this->schema->label) > 0);
     }
     public function testPreloadedFilteredThings()
     {
-        $query = $this->api->query('argomenti')
+        $query = $this->schema->query('argomenti')
             ->with('prodotti.articoli');
         $this->assertSame(14, $query->first()->rel('prodotti')->count());
 
@@ -56,7 +60,7 @@ class MainTest extends \PHPUnit\Framework\TestCase
 
     public function testPreloadedFilteredThingsLimit()
     {
-        $arg = $this->api->query('argomenti')
+        $arg = $this->schema->query('argomenti')
             ->with('prodotti')
             ->filterRelation('prodotti', function (QueryBuilder $q) {
                 $q->limit(1);
@@ -66,7 +70,7 @@ class MainTest extends \PHPUnit\Framework\TestCase
     }
     public function testPreloadedFilteredThingsOffset()
     {
-        $arg = $this->api->query('argomenti')
+        $arg = $this->schema->query('argomenti')
             ->with('prodotti')
             ->filterRelation('prodotti', function (QueryBuilder $q) {
                 $q->limit(1);
@@ -77,7 +81,7 @@ class MainTest extends \PHPUnit\Framework\TestCase
     }
     public function testSchemaStructure()
     {
-        $res = $this->api->schema->resource('capitoli');
+        $res = $this->schema->resource('capitoli');
         foreach ($res->fields() as $field) {
             $this->assertIsString($field->getLabel());
             $this->assertIsString($field->getLabel('zh'));
@@ -98,22 +102,22 @@ class MainTest extends \PHPUnit\Framework\TestCase
 
     function testCountActivePrezzo()
     {
-        $count = $this->api->query('prezzi')->count();
+        $count = $this->schema->query('prezzi')->count();
         $this->assertSame(1252, $count);
     }
     function testCountAllPrezzo()
     {
-        $count = $this->api->query('prezzi')->withStatus('any')->count();
+        $count = $this->schema->query('prezzi')->withStatus('any')->count();
         $this->assertSame(1253, $count);
     }
     function testCountDeletedPrezzo()
     {
-        $count = $this->api->query('prezzi')->withStatus('deleted')->count();
+        $count = $this->schema->query('prezzi')->withStatus('deleted')->count();
         $this->assertSame(1, $count);
     }
     function testGetDeletedItemShouldHaveData()
     {
-        $prezzo = $this->api->query('prezzi')->withStatus('deleted')->first();
+        $prezzo = $this->schema->query('prezzi')->withStatus('deleted')->first();
         $this->assertSame(238508, !$prezzo ? null : $prezzo->id);
         $this->assertSame(18.8, !$prezzo ? null : $prezzo->val('prezzo1'));
     }
@@ -145,7 +149,7 @@ class MainTest extends \PHPUnit\Framework\TestCase
                 'Profili LED Speciali' => 236842,
                 'ARTICOLI FUORI STANDARD' => 236843,
             ],
-            $this->api->query('capitoli')->map('descrizione', '_id')
+            $this->schema->query('capitoli')->map('descrizione', '_id')
         );
         $this->assertSame(
             [
@@ -171,22 +175,22 @@ class MainTest extends \PHPUnit\Framework\TestCase
                 'Special LED profiles' => 236842,
                 'OUT OF STOCK ARTICLE' => 236843,
             ],
-            $this->api->query('capitoli')->map('descrizione', '_id', 'gb')
+            $this->schema->query('capitoli')->map('descrizione', '_id', 'gb')
         );
         $this->assertSame(3, $this->api->getRequestCount());
     }
 
     public function testGetFirstThing()
     {
-        $cap = $this->api->query('capitoli')->first();
+        $cap = $this->schema->query('capitoli')->first();
         $this->checkFirstChapter($cap);
-        $cap_by_id = $this->api->query('capitoli')->where('_id', $cap->id)->first();
+        $cap_by_id = $this->schema->query('capitoli')->where('_id', $cap->id)->first();
         $this->assertSame($cap->id, $cap_by_id->id);
     }
 
     public function testRelatedValues()
     {
-        $thing = $this->api->query('capitoli')->with('argomenti')->find(236823);
+        $thing = $this->schema->query('capitoli')->with('argomenti')->find(236823);
         $this->assertSame(236823, $thing->id);
         $this->assertSame(236823, $thing->val('_id'));
         $this->assertSame([
@@ -202,7 +206,7 @@ class MainTest extends \PHPUnit\Framework\TestCase
     public function testWriteFirstThing()
     {
         // Get the resource
-        $res_cap = $this->api->schema->resource('capitoli');
+        $res_cap = $this->schema->resource('capitoli');
 
         // Find an element
         $cap = $res_cap->query()->first();
@@ -219,7 +223,7 @@ class MainTest extends \PHPUnit\Framework\TestCase
     public function testCreateTwoThings()
     {
         // Get the resource
-        $res_cap = $this->api->schema->resource('capitoli');
+        $res_cap = $this->schema->resource('capitoli');
 
         $count = $res_cap->query()->all()->count();
 
@@ -234,7 +238,7 @@ class MainTest extends \PHPUnit\Framework\TestCase
     public function testDeleteTwoThings()
     {
         // Get the resource
-        $res_cap = $this->api->schema->resource('capitoli');
+        $res_cap = $this->schema->resource('capitoli');
 
         $to_delete = $res_cap->query()->where('indice', '<', 0)->all();
         // $this->assertSame(2, $to_delete->count());
@@ -249,7 +253,7 @@ class MainTest extends \PHPUnit\Framework\TestCase
     public function testDeleteForeverOneThing()
     {
         // Get the resource
-        $res_cap = $this->api->schema->resource('capitoli');
+        $res_cap = $this->schema->resource('capitoli');
 
         $to_delete = $res_cap->query()->isDeletedStatus()->ids();
         $this->assertTrue($to_delete->count() > 0);
@@ -270,25 +274,25 @@ class MainTest extends \PHPUnit\Framework\TestCase
 
     function testGetNonExistingFirst()
     {
-        $cap = $this->api->query('capitoli')->offset(99999)->first();
+        $cap = $this->schema->query('capitoli')->offset(99999)->first();
         $this->assertNull($cap);
     }
 
     public function testFiles()
     {
-        $arg = $this->api->query('argomenti')->first();
+        $arg = $this->schema->query('argomenti')->first();
         $img = $arg->file('disegno1');
         $this->assertInstanceOf(File::class, $img);
-        $this->assertStringEndsWith('/api/storage/dd03bec8a725366c6e6327ceb0b91ffd587be553/shutterstock_36442114-ok-NEW.jpg', $img->link());
-        $this->assertStringEndsWith('/api/storage/dd03bec8a725366c6e6327ceb0b91ffd587be553.png/shutterstock_36442114-ok-NEW.png', $img->link([
+        $this->assertEquals('https://storage.onpage.it/dd03bec8a725366c6e6327ceb0b91ffd587be553/shutterstock_36442114-ok-NEW.jpg', $img->link());
+        $this->assertEquals('https://storage.onpage.it/dd03bec8a725366c6e6327ceb0b91ffd587be553.png/shutterstock_36442114-ok-NEW.png', $img->link([
             'ext' => 'png',
         ]));
-        $this->assertStringEndsWith('/api/storage/dd03bec8a725366c6e6327ceb0b91ffd587be553.300x300-fit.jpg/shutterstock_36442114-ok-NEW.jpg', $img->thumbnail(300,  300,  'fit',  'jpg'));
+        $this->assertEquals('https://storage.onpage.it/dd03bec8a725366c6e6327ceb0b91ffd587be553.300x300-fit.jpg/shutterstock_36442114-ok-NEW.jpg', $img->thumbnail(300,  300,  'fit',  'jpg'));
     }
 
     public function testGetAllThings()
     {
-        $caps = $this->api->query('capitoli')->all();
+        $caps = $this->schema->query('capitoli')->all();
         /** @var Thing */
         $first = $caps->first();
         $this->checkFirstChapter($first);
@@ -296,21 +300,21 @@ class MainTest extends \PHPUnit\Framework\TestCase
     }
     public function testFind()
     {
-        $thing = $this->api->query('capitoli')
+        $thing = $this->schema->query('capitoli')
             ->where('_id', 236823)
             ->first();
         $this->assertSame(236823, $thing->id);
     }
     public function testWhere()
     {
-        $thing = $this->api->query('capitoli')
+        $thing = $this->schema->query('capitoli')
             ->where('descrizione', 'like', 'led')
             ->first();
         $this->assertSame(236827, $thing->id);
     }
     public function testWhereHas()
     {
-        $res = $this->api->query('capitoli')
+        $res = $this->schema->query('capitoli')
             ->whereHas('argomenti', function (QueryBuilder $q) {
                 $q->where('intestazione', 'like', 'pro');
             })
@@ -320,7 +324,7 @@ class MainTest extends \PHPUnit\Framework\TestCase
             'Proiettori LED' => 236829,
             'Profili LED Speciali' => 236842,
         ], $res);
-        $res = $this->api->query('capitoli')
+        $res = $this->schema->query('capitoli')
             ->whereHas('argomenti.prodotti.articoli', function (QueryBuilder $q) {
                 $q->where('codice', 'PRKITINCB');
             })
@@ -332,39 +336,39 @@ class MainTest extends \PHPUnit\Framework\TestCase
 
     public function testRelationIds()
     {
-        $thing = $this->api->query('capitoli')->loadFields(['argomenti'])->first();
+        $thing = $this->schema->query('capitoli')->loadFields(['argomenti'])->first();
         $this->assertSame([236849], $thing->values('argomenti')->all());
     }
 
     public function testOnDemandRelations()
     {
-        $thing = $this->api->query('capitoli')->first();
+        $thing = $this->schema->query('capitoli')->first();
         $this->api->resetRequestCount();
-        $this->api->allow_dynamic_relations = true;
+        $this->schema->allow_dynamic_relations = true;
         $this->checkArgomenti($thing);
-        $this->api->allow_dynamic_relations = false;
+        $this->schema->allow_dynamic_relations = false;
         $this->assertSame(1, $this->api->getRequestCount());
     }
 
     public function testOnDemandNestedRelations()
     {
-        $thing = $this->api->query('capitoli')->first();
+        $thing = $this->schema->query('capitoli')->first();
         $this->api->resetRequestCount();
-        $this->api->allow_dynamic_relations = true;
+        $this->schema->allow_dynamic_relations = true;
         $arts = $thing->rel('argomenti.prodotti.articoli');
-        $this->api->allow_dynamic_relations = false;
+        $this->schema->allow_dynamic_relations = false;
         $this->assertSame(1, $this->api->getRequestCount());
         $this->assertSame(76, $arts->count());
     }
 
     public function testPreloadedThings()
     {
-        $thing = $this->api->query('capitoli')->with('argomenti.prodotti')->first();
+        $thing = $this->schema->query('capitoli')->with('argomenti.prodotti')->first();
         $this->api->resetRequestCount();
         $this->checkArgomenti($thing);
         $this->assertSame(0, $this->api->getRequestCount());
 
-        $thing = $this->api->query('capitoli')->with('argomenti.prodotti.articoli')->first();
+        $thing = $this->schema->query('capitoli')->with('argomenti.prodotti.articoli')->first();
         $this->api->resetRequestCount();
         $arts = $thing->rel('argomenti.prodotti.articoli');
         $this->assertSame(0, $this->api->getRequestCount());
@@ -379,14 +383,14 @@ class MainTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('Perfiles de aluminio', $cap->val('descrizione', 'es'));
 
         // Test fallback lang
-        $this->api->schema->lang = 'zh';
-        $this->api->schema->setFallbackLang(null);
+        $this->schema->lang = 'zh';
+        $this->schema->setFallbackLang(null);
         $this->assertSame(null, $cap->val('descrizione'));
-        $this->api->schema->setFallbackLang('gb');
+        $this->schema->setFallbackLang('gb');
         $this->assertSame('Aluminium profiles', $cap->val('descrizione'));
-        $this->api->schema->setFallbackLang(null);
+        $this->schema->setFallbackLang(null);
         $this->assertSame(null, $cap->val('descrizione'));
-        $this->api->schema->lang = 'it';
+        $this->schema->lang = 'it';
     }
 
     public function checkArgomenti(Thing $thing)

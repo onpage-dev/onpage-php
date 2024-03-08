@@ -7,15 +7,15 @@ use OnPage\Exceptions\GenericException;
 
 class DataWriter
 {
-    private AbstractApi $api;
+    private Schema $schema;
     private Resource $resource;
     private array $edits = [];
     private bool $ignore_invalid_urls = false;
     private bool $queue_pdf_generators = false;
 
-    function __construct(AbstractApi $api, Resource $resource)
+    function __construct(Schema $schema, Resource $resource)
     {
-        $this->api = $api;
+        $this->schema = $schema;
         $this->resource = $resource;
     }
     function resource(): Resource
@@ -24,7 +24,7 @@ class DataWriter
     }
     function schema(): Schema
     {
-        return $this->api->schema;
+        return $this->schema;
     }
     function createThing(string $local_key = null, $langs = null): ThingEditor
     {
@@ -84,7 +84,7 @@ class DataWriter
                 $req['things'][] = $edit->toArray();
             }
             try {
-                $res = $this->api->post('things/bulk', $req);
+                $res = $this->schema->api->post('things/bulk', $req);
                 $ret = array_merge($ret, $res);
             } catch (\GuzzleHttp\Exception\ClientException $e) {
                 $res = json_decode($e->getResponse()->getBody());

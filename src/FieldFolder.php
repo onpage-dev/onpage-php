@@ -18,11 +18,11 @@ class FieldFolder
     public string $updated_at;
     public array $form_fields;
     public array $arrow_fields;
-    private AbstractApi $api;
+    private Schema $schema;
 
-    function __construct(AbstractApi $api, object $json)
+    function __construct(Schema $schema, object $json)
     {
-        $this->api = $api;
+        $this->schema = $schema;
         $this->id = $json->id;
         $this->is_default = $json->is_default;
         $this->name = $json->name;
@@ -41,14 +41,14 @@ class FieldFolder
     function getLabel(?string $lang = null): string
     {
         if (isset($this->labels[$lang])) return $this->labels[$lang];
-        $lang = $this->api->schema->lang;
+        $lang = $this->schema->lang;
         if (isset($this->labels[$lang])) return $this->labels[$lang];
         return $this->name;
     }
 
     function resource(): Resource
     {
-        return $this->api->schema->resource($this->resource_id);
+        return $this->schema->resource($this->resource_id);
     }
 
     /** @return Collection<Field> */

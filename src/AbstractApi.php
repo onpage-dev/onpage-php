@@ -4,18 +4,17 @@ namespace OnPage;
 
 abstract class AbstractApi
 {
-    public Schema $schema;
+    protected $is_user_mode;
+    protected $domain;
+    protected $token;
     protected int $req_count = 0;
-    public $allow_dynamic_relations = false;
     public string $thumbnail_format = 'png';
     public bool $download_thing_labels = false;
-    protected string $api_url = 'https://app.onpage.it/api/';
 
 
-    function loadSchema(): Schema
+    function loadSchema(int $schema_id = null): Schema
     {
-        $this->schema = new Schema($this, $this->get('schema'));
-        return $this->schema;
+        return new Schema($this, $schema_id ? $this->get("schemas/$schema_id") : $this->get('schema'));
     }
 
     function get(string $endpoint, array $params = [])
@@ -34,11 +33,6 @@ abstract class AbstractApi
 
     abstract function request(string $method, string $endpoint, array $data = []);
 
-    function query(string $resource): QueryBuilder
-    {
-        return $this->schema->query($resource);
-    }
-
     public function getRequestCount(): int
     {
         return $this->req_count;
@@ -48,9 +42,10 @@ abstract class AbstractApi
     {
         $this->req_count = 0;
     }
+
     function storageLink(string $token, string $name = null, bool $force_download = false): string
     {
-        $url = "{$this->api_url}/storage/$token";
+        $url = "https://storage.$this->domain/$token";
         if ($name) {
             $url .= '/' . rawurlencode($name);
         }
@@ -62,42 +57,5 @@ abstract class AbstractApi
             $url .= '?' . http_build_query($options);
         }
         return $url;
-    }
-
-    /**
-     * Dumps a csv containing information about
-     * the used fields
-     */
-    function dumpUsedFields(string $csv_path)
-    {
-        $file = fopen($csv_path, 'wb');
-
-        fputcsv($file, [
-            'Resource',
-            'Resource name',
-            'Field',
-            'Field name',
-            'Field type',
-        ]);
-
-        foreach ($this->schema->resources() as $res) {
-            $used = false;
-            foreach ($res->fields() as $field) {
-                if (!$field->hasBeenUsed()) continue;
-                $used = true;
-                fputcsv($file, [
-                    $res->label,
-                    $res->name,
-                    $field->label,
-                    $field->name,
-                    $field->type,
-                ]);
-            }
-            if ($used) {
-                fputcsv($file, []);
-            }
-        }
-
-        fclose($file);
     }
 }
