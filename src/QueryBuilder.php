@@ -152,12 +152,11 @@ class QueryBuilder
         }
         return $ret;
     }
-    public function delete(bool $forever = false): ?array
+    public function delete(bool $forever = false): Collection
     {
         $req = $this->build('delete');
         if ($forever) $req['forever'] = true;
-        $res = $this->schema->api->delete('things', $req);
-        return $res;
+        return collect($this->schema->api->delete('things', $req));
     }
     /** @param string|array $rel */
     public function filterRelation($rel, callable $subquery)
@@ -287,6 +286,14 @@ class QueryBuilder
             $values = $values->all();
         }
         return $this->where($field, 'in', $values);
+    }
+    /** @param array|Collection $values */
+    public function whereNotIn(string $field, $values)
+    {
+        if ($values instanceof Collection) {
+            $values = $values->all();
+        }
+        return $this->where($field, 'not in', $values);
     }
     public function whereEmpty(string $field)
     {
