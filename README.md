@@ -122,6 +122,11 @@ echo $cat->val('description', 'zh'); // you can specify a language
 $schema->lang = 'zh';
 echo $cat->val('name'); // 再见
 
+// You can also set a fallback language
+$schema->lang = 'zh';
+$schema->fallback_lang = 'en';
+echo $cat->val('description'); // English description if chinese description is missing
+
 // The values function is useful for multivalue fields, it will return a laravel collection of values.
 echo $cat->values('bullet_points')->implode('; ');
 ```
