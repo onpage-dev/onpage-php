@@ -1,0 +1,2 @@
+#!/bin/bash
+docker compose run -ti --build --entrypoint 'composer' php74 "$@"

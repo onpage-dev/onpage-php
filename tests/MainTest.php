@@ -243,7 +243,7 @@ class MainTest extends \PHPUnit\Framework\TestCase
         $to_delete = $res_cap->query()->where('indice', '<', 0)->all();
         // $this->assertSame(2, $to_delete->count());
 
-        $deleted_ids = $res_cap->query()->where('indice', '<', 0)->delete();
+        $deleted_ids = $res_cap->query()->where('indice', '<', 0)->delete()->all();
         $this->assertEquals($to_delete->pluck('id')->all(), $deleted_ids);
 
         $count = $res_cap->query()->where('indice', '<', 0)->all();
