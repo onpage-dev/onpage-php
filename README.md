@@ -37,7 +37,7 @@ foreach ($products as $prod) {
 }
 
 // Get only the first item
-$prod = $api->query('products')->first();
+$prod = $schema->query('products')->first();
 ```
 
 ### Filters and deletions
@@ -45,14 +45,14 @@ $prod = $api->query('products')->first();
 ```php
 // Retrieve all records of a resource (returns a laravel collection of \OnPage\Thing)
 // NOTE: system fields must be prefixed with the _ symbol
-$api->query('products')
+$schema->query('products')
     ->where('_id', 42) // = is the default operator
     ->where('_created_at', '<', '2024-01-01 00:00:00')
     ->where('_updated_at', '>=', '2024-01-01 00:00:00')
     ->first();
 
 // Other filters
-$api->query('products')
+$schema->query('products')
     ->where('name', 'like', 'shoes') // you can specify a different operator
     ->where('category.name', 'Nike') // you can query relations
     ->where('dimension', '>', 10) // you get it
@@ -60,7 +60,7 @@ $api->query('products')
     ->all(); // returns a collection with all your records
 
 // Join filters with the OR clause: get all products for the adidas or nike brands
-$api->query('products')
+$schema->query('products')
     ->whereOneOf(function(\OnPage\QueryBuilder $q) {
         ->where('price', 'Nike')
         ->where('brand', 'Adidas')
@@ -68,7 +68,7 @@ $api->query('products')
     ->all();
 
 // Advanced filtering by relation
-$api->query('products')
+$schema->query('products')
 
     // only retrieve products that have at least one associated category
     ->whereHas('category')
@@ -88,17 +88,17 @@ $api->query('products')
     ->all();
 
 // You can just simply move data to trash the same way:
-$api->query('products')
+$schema->query('products')
     ->where(...)
     ->delete();
 
 // Or delete elements bypassing the trash:
-$api->query('products')
+$schema->query('products')
     ->where(...)
     ->delete(forever: true);
 
 // Filter by element status trash, any
-$api->query('products')
+$schema->query('products')
     ->where(...)
     ->delete(forever: true);
 ```
@@ -109,7 +109,7 @@ Use the val() function to get the first value in a field.
 Use the values() function to get all values in a field as a collection.
 
 ```php
-$cat = $api->query('categories')->first();
+$cat = $schema->query('categories')->first();
 echo $cat->id; // item ID
 echo $cat->created_at; // creation date e.g. 2022-01-01 23:33:00
 echo $cat->updated_at; // date of last update to any of the fields e.g. 2022-01-01 23:33:00
@@ -172,20 +172,20 @@ $product->file('cover_image')->link(['x' => 200, 'ext' => 'png'])
 
 ```php
 // Speed things up by only loading some fields
-$api->query('products')->loadFields(['title'])->all();
+$schema->query('products')->loadFields(['title'])->all();
 
 // You can also limit the fields on a related item
-$api->query('products')
+$schema->query('products')
 ->with([ 'colors' ])
 ->loadRelationFields('colors', ['name', 'image']) // only load 2 fields for the "color" relation
 ->all();
 
 
 // Get a mapping between two fields or a field and the thing ID
-$api->query('products')->map('code');
+$schema->query('products')->map('code');
 // [ 'MYSKU100' => 1827, 'MYSKU101' => 1828, ... ]
 
-$api->query('products')->map('code', 'title');
+$schema->query('products')->map('code', 'title');
 // [ 'MYSKU100' => 'Apples', 'MYSKU101' => 'Bananas', ... ]
 ```
 
@@ -193,7 +193,7 @@ $api->query('products')->map('code', 'title');
 
 ```php
 // You need to specify the relations using the "with" method
-$cat = $api->query('categories')
+$cat = $schema->query('categories')
     ->with('subcategories')
     ->first();
 $subcategories = $cat->rel('subcategories');
@@ -202,12 +202,12 @@ foreach ($subcategories as $subcategory) {
 }
 
 // You can also preload nested subcategories
-$cat = $api->query('categories')
+$cat = $schema->query('categories')
     ->with('subcategories.articles.colors')
     ->first();
 
 // Or you can pass the relations as an array
-$products_with_colors = $api->query('products')
+$products_with_colors = $schema->query('products')
     ->with([ 'colors', 'categories' ])
     ->all();
 foreach ($products_with_colors as $prod) {
@@ -218,7 +218,7 @@ foreach ($products_with_colors as $prod) {
 }
 
 // If you need to filter the related items you want to download, you can do this:
-$cat = $api->query('categories')
+$cat = $schema->query('categories')
     ->with('subcategories.articles.colors')
     ->filterRelation('subcategories.articles', function(\OnPage\QueryBuilder $q) {
         $q->where('is_online', true);
@@ -241,7 +241,7 @@ This class allows you to edit many records at once.
 You can easily obtain the editor calling:
 
 ```php
-$writer = $api->resource('categories')->writer();
+$writer = $schema->resource('categories')->writer();
 ```
 
 Now that you have a **Resource Writer**, you can use it to create things:
@@ -269,7 +269,7 @@ $writer->save();
 ## Updating a single item (second method)
 
 ```php
-$product = $api->query('products')->where('name', 'Plastic Duck')->first();
+$product = $schema->query('products')->where('name', 'Plastic Duck')->first();
 
 $editor = $product->editor();
 $editor->set('description', 'This yellow plastic duck will be your best friend');
