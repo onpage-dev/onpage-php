@@ -24,6 +24,11 @@ class ThingEditor
         $this->langs = $langs;
     }
 
+    function getId(): int|null
+    {
+        return $this->id;
+    }
+
     function setLangs(array $langs = null)
     {
         $this->langs = $langs;

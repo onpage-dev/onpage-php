@@ -67,8 +67,9 @@ class DataWriter
     /** @return int[] */
     function save(): array
     {
+        // Remove all empty updates (allow empty creations)
         $edits = array_filter($this->edits, function (ThingEditor $edit) {
-            return $edit->hasData();
+            return !$edit->getId() || $edit->hasData();
         });
         $ret = [];
         foreach (array_chunk($edits, 1000) as $chunk) {
