@@ -6,7 +6,7 @@ class File
 {
     public string $name;
     public string $token;
-    public string $ext;
+    public string|null $ext;
     public int $size;
     private Api $api;
 
@@ -24,7 +24,7 @@ class File
         return in_array(strtolower($this->ext), ['png', 'gif', 'jpg', 'webp', 'eps', 'dwg', 'svg', 'tiff']);
     }
 
-    function thumbnail(int $width = null, int $height = null, ?string $mode = 'contain', ?string $ext = null)
+    function thumbnail(?int $width = null, ?int $height = null, ?string $mode = 'contain', ?string $ext = null)
     {
         return $this->link([
             'x' => $width,
