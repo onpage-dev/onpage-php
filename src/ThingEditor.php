@@ -29,9 +29,10 @@ class ThingEditor
         return $this->id;
     }
 
-    function setLangs(array $langs = null)
+    function setLangs(array $langs = null): ThingEditor
     {
         $this->langs = $langs;
+        return $this;
     }
 
     private function resource(): Resource
